@@ -1,0 +1,96 @@
+PODS:
+  - Alamofire (5.4.1)
+  - AlamofireNetworkActivityLogger (3.4.0):
+    - Alamofire (~> 5.4.0)
+  - AlignedCollectionViewFlowLayout (1.1.2)
+  - Differentiator (5.0.0)
+  - KakaoSDKAuth (2.4.1):
+    - KakaoSDKCommon (= 2.4.1)
+  - KakaoSDKCommon (2.4.1):
+    - KakaoSDKCommon/Common (= 2.4.1)
+    - KakaoSDKCommon/Network (= 2.4.1)
+  - KakaoSDKCommon/Common (2.4.1)
+  - KakaoSDKCommon/Network (2.4.1):
+    - Alamofire (~> 5.1)
+    - KakaoSDKCommon/Common (= 2.4.1)
+  - KeychainAccess (4.2.2)
+  - Kingfisher (6.2.1)
+  - ReactorKit (3.0.0):
+    - RxSwift (~> 6.0)
+    - WeakMapTable (~> 1.1)
+  - RxCocoa (6.1.0):
+    - RxRelay (= 6.1.0)
+    - RxSwift (= 6.1.0)
+  - RxDataSources (5.0.0):
+    - Differentiator (~> 5.0)
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
+  - RxRelay (6.1.0):
+    - RxSwift (= 6.1.0)
+  - RxSwift (6.1.0)
+  - SDCAlertView (12.0.1)
+  - SnapKit (5.0.1)
+  - Then (2.7.0)
+  - "UITextView+Placeholder (1.4.0)"
+  - WeakMapTable (1.2.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 5.1)
+  - AlamofireNetworkActivityLogger (~> 3.4)
+  - AlignedCollectionViewFlowLayout
+  - KakaoSDKAuth
+  - KeychainAccess (~> 4.2.1)
+  - Kingfisher
+  - ReactorKit
+  - RxCocoa
+  - RxDataSources
+  - RxSwift
+  - SDCAlertView
+  - SnapKit
+  - Then
+  - "UITextView+Placeholder"
+
+SPEC REPOS:
+  trunk:
+    - Alamofire
+    - AlamofireNetworkActivityLogger
+    - AlignedCollectionViewFlowLayout
+    - Differentiator
+    - KakaoSDKAuth
+    - KakaoSDKCommon
+    - KeychainAccess
+    - Kingfisher
+    - ReactorKit
+    - RxCocoa
+    - RxDataSources
+    - RxRelay
+    - RxSwift
+    - SDCAlertView
+    - SnapKit
+    - Then
+    - "UITextView+Placeholder"
+    - WeakMapTable
+
+SPEC CHECKSUMS:
+  Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
+  AlamofireNetworkActivityLogger: 162ab8aee00e6267a4304d7cc134e13ccfe3bcc5
+  AlignedCollectionViewFlowLayout: ee2ef451e741ec08f8e0967d828001e2f051c20a
+  Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
+  KakaoSDKAuth: fcba1c9ede431683f5bdd84c835a96981cb115a5
+  KakaoSDKCommon: 0912aa0c7db051ae8dc07a35395cf644f7728f95
+  KeychainAccess: c0c4f7f38f6fc7bbe58f5702e25f7bd2f65abf51
+  Kingfisher: e71c6fac2aebb1262888cabc2cb13d313362a48f
+  ReactorKit: 5348c9881dcb546605b451e32759dccc9937d36e
+  RxCocoa: 5c51f02d562cbd94629f6c26cf0c80fe4ab8d343
+  RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
+  RxRelay: 483e1a19fad961b41f0b0c0bee506f46c1ae14fe
+  RxSwift: a834e5c538e89eca0cae86f403f4fbf0336786ce
+  SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+  Then: acfe0be7e98221c6204e12f8161459606d5d822d
+  "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
+  WeakMapTable: 05c694ce8439a7a9ebabb56187287a63c57673d6
+
+PODFILE CHECKSUM: cca7f56e4542652dd275128471459c4d45f345c1
+
+COCOAPODS: 1.9.3

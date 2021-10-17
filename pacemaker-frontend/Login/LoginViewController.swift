@@ -84,6 +84,11 @@ class LoginViewController: UIViewController, View {
     }
 
     func bind(reactor: LoginViewReactor) {
-
+        signupButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                let viewController = SignupViewController()
+                self?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 }

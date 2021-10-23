@@ -90,5 +90,28 @@ class LoginViewController: UIViewController, View {
                 self?.present(viewController, animated: true)
             })
             .disposed(by: disposeBag)
+
+        emailTextField.rx.text
+            .distinctUntilChanged()
+            .map { .setEmail($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        passwordTextField.rx.text
+            .distinctUntilChanged()
+            .map { .setPassword($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        loginButton.rx.tap.map { _ in .signin }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        reactor.state.compactMap(\.user)
+            .take(1)
+            .subscribe(onNext: { user in
+                // TODO: user 저장, main view로 보냄
+            })
+            .disposed(by: disposeBag)
     }
 }

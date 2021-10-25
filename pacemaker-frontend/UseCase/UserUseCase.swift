@@ -10,10 +10,19 @@ import RxSwift
 
 protocol UserUseCase {
     func signin(email: String, password: String) -> Single<User>
+    func signup(email: String, password: String) -> Single<User>
 }
 
 final class DefaultUserUseCase: UserUseCase {
     func signin(email: String, password: String) -> Single<User> {
         .just(User(email: "mockdata@mock.com"))
+    }
+    func signup(email: String, password: String) -> Single<User> {
+        // 1. check if valid email
+        // 2. register user
+        guard true else {
+            return .just(User(email: ""))
+        }
+        return .just(User(email: "mockdata@mock.com"))
     }
 }

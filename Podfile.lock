@@ -25,6 +25,9 @@ PODS:
     - Differentiator (~> 5.0)
     - RxCocoa (~> 6.0)
     - RxSwift (~> 6.0)
+  - RxKeyboard (2.0.0):
+    - RxCocoa (~> 6.0)
+    - RxSwift (~> 6.0)
   - RxRelay (6.1.0):
     - RxSwift (= 6.1.0)
   - RxSwift (6.1.0)
@@ -44,6 +47,7 @@ DEPENDENCIES:
   - ReactorKit
   - RxCocoa
   - RxDataSources
+  - RxKeyboard
   - RxSwift
   - SDCAlertView
   - SnapKit
@@ -63,6 +67,7 @@ SPEC REPOS:
     - ReactorKit
     - RxCocoa
     - RxDataSources
+    - RxKeyboard
     - RxRelay
     - RxSwift
     - SDCAlertView
@@ -83,6 +88,7 @@ SPEC CHECKSUMS:
   ReactorKit: 5348c9881dcb546605b451e32759dccc9937d36e
   RxCocoa: 5c51f02d562cbd94629f6c26cf0c80fe4ab8d343
   RxDataSources: aa47cc1ed6c500fa0dfecac5c979b723542d79cf
+  RxKeyboard: 4f5863f43b4ff0cbb2a20b94688d6b80c8a43c14
   RxRelay: 483e1a19fad961b41f0b0c0bee506f46c1ae14fe
   RxSwift: a834e5c538e89eca0cae86f403f4fbf0336786ce
   SDCAlertView: d6070733e6ce72360dde3f84a2f9eafcda25ed49
@@ -91,6 +97,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   WeakMapTable: 05c694ce8439a7a9ebabb56187287a63c57673d6
 
-PODFILE CHECKSUM: cca7f56e4542652dd275128471459c4d45f345c1
+PODFILE CHECKSUM: 3ce225844dbb5b3a7a523ee9bcf8cf80fd9413ae
 
 COCOAPODS: 1.9.3

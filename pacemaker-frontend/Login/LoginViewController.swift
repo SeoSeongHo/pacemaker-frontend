@@ -11,31 +11,33 @@ import RxSwift
 import ReactorKit
 import Then
 import SnapKit
+import RxKeyboard
 
 class LoginViewController: UIViewController, View {
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
 
     private let titleLabel = UILabel().then {
         $0.text = "Pacemaker"
         $0.font = .systemFont(ofSize: 40, weight: .bold)
     }
 
-    private let emailTextField = UITextField().then {
-        $0.placeholder = "email"
-        $0.keyboardType = .emailAddress
-        $0.layer.borderColor = UIColor.gray.cgColor
-        $0.layer.borderWidth = 1
+    private let emailTextField = InputField().then {
+        $0.textField.placeholder = "email"
+        $0.textField.keyboardType = .emailAddress
+        $0.titleLabel.text = "email"
     }
 
-    private let passwordTextField = UITextField().then {
-        $0.placeholder = "password"
-        $0.isSecureTextEntry = true
-        $0.layer.borderColor = UIColor.gray.cgColor
-        $0.layer.borderWidth = 1
+    private let passwordTextField = InputField().then {
+        $0.textField.placeholder = "password"
+        $0.titleLabel.text = "password"
+        $0.textField.isSecureTextEntry = true
     }
 
     private let loginButton = UIButton().then {
         $0.setTitle("Sign in", for: .normal)
         $0.backgroundColor = .gray
+        $0.roundCorner(7)
     }
 
     private let signupButton = UIButton().then {
@@ -54,12 +56,24 @@ class LoginViewController: UIViewController, View {
     private func configure() {
         view.backgroundColor = .white
 
-        view.addSubview(titleLabel)
-        view.addSubview(bottomStackView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(bottomStackView)
         bottomStackView.addArrangedSubview(emailTextField)
         bottomStackView.addArrangedSubview(passwordTextField)
         bottomStackView.addArrangedSubview(loginButton)
         bottomStackView.addArrangedSubview(signupButton)
+
+        scrollView.snp.makeConstraints { make in
+            make.top.left.right.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+        }
 
         titleLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview().multipliedBy(0.8)
@@ -67,7 +81,12 @@ class LoginViewController: UIViewController, View {
         }
 
         bottomStackView.snp.makeConstraints { make in
-            make.left.right.bottom.equalTo(view.safeAreaLayoutGuide).inset(50)
+            make.top.equalTo(titleLabel.snp.bottom).offset(150)
+            make.left.right.bottom.equalToSuperview().inset(50)
+        }
+
+        loginButton.snp.makeConstraints { make in
+            make.height.equalTo(46)
         }
     }
 
@@ -91,13 +110,13 @@ class LoginViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
 
-        emailTextField.rx.text
+        emailTextField.textField.rx.text
             .distinctUntilChanged()
             .map { .setEmail($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        passwordTextField.rx.text
+        passwordTextField.textField.rx.text
             .distinctUntilChanged()
             .map { .setPassword($0) }
             .bind(to: reactor.action)
@@ -110,7 +129,16 @@ class LoginViewController: UIViewController, View {
         reactor.state.compactMap(\.user)
             .take(1)
             .subscribe(onNext: { user in
-                // TODO: user 저장, main view로 보냄
+                Toaster.shared.showToast(.success(user.email))
+            })
+            .disposed(by: disposeBag)
+
+        RxKeyboard.instance.visibleHeight
+            .distinctUntilChanged()
+            .drive(onNext: { [weak self] height in
+                self?.scrollView.snp.updateConstraints { make in
+                    make.bottom.equalToSuperview().inset(height)
+                }
             })
             .disposed(by: disposeBag)
     }

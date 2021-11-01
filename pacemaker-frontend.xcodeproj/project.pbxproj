@@ -18,6 +18,9 @@
 		6401BA52271C3E36007C5B3F /* SignupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6401BA51271C3E36007C5B3F /* SignupViewController.swift */; };
 		6401BA552722EBFF007C5B3F /* UserUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6401BA542722EBFF007C5B3F /* UserUseCase.swift */; };
 		6401BA582722EC55007C5B3F /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6401BA572722EC55007C5B3F /* User.swift */; };
+		64A6417F272FE9D300C45B51 /* ToastWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A6417E272FE9D300C45B51 /* ToastWindow.swift */; };
+		64A64182272FEB2C00C45B51 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A64181272FEB2C00C45B51 /* UIView+Extensions.swift */; };
+		64A64184272FF09000C45B51 /* InputField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A64183272FF09000C45B51 /* InputField.swift */; };
 		F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838FB42272290CE00526354 /* SignupViewReactor.swift */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +39,9 @@
 		6401BA51271C3E36007C5B3F /* SignupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewController.swift; sourceTree = "<group>"; };
 		6401BA542722EBFF007C5B3F /* UserUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserUseCase.swift; sourceTree = "<group>"; };
 		6401BA572722EC55007C5B3F /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		64A6417E272FE9D300C45B51 /* ToastWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToastWindow.swift; sourceTree = "<group>"; };
+		64A64181272FEB2C00C45B51 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
+		64A64183272FF09000C45B51 /* InputField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputField.swift; sourceTree = "<group>"; };
 		B221CE7C97EA4D6D05894288 /* Pods-pacemaker-frontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pacemaker-frontend.release.xcconfig"; path = "Target Support Files/Pods-pacemaker-frontend/Pods-pacemaker-frontend.release.xcconfig"; sourceTree = "<group>"; };
 		F838FB42272290CE00526354 /* SignupViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewReactor.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -81,6 +87,8 @@
 		6401BA352719E566007C5B3F /* pacemaker-frontend */ = {
 			isa = PBXGroup;
 			children = (
+				64A64180272FEB1C00C45B51 /* Util */,
+				64A6417D272FE9BF00C45B51 /* Manager */,
 				6401BA562722EC4B007C5B3F /* Model */,
 				6401BA532722EBE9007C5B3F /* UseCase */,
 				6401BA50271C3E25007C5B3F /* Signup */,
@@ -127,6 +135,23 @@
 				6401BA572722EC55007C5B3F /* User.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		64A6417D272FE9BF00C45B51 /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Manager;
+			sourceTree = "<group>";
+		};
+		64A64180272FEB1C00C45B51 /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				64A6417E272FE9D300C45B51 /* ToastWindow.swift */,
+				64A64181272FEB2C00C45B51 /* UIView+Extensions.swift */,
+				64A64183272FF09000C45B51 /* InputField.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 		8A380A06C3C85C6F4FE0BC14 /* Pods */ = {
@@ -255,12 +280,15 @@
 				F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */,
 				6401BA52271C3E36007C5B3F /* SignupViewController.swift in Sources */,
 				6401BA552722EBFF007C5B3F /* UserUseCase.swift in Sources */,
+				64A64184272FF09000C45B51 /* InputField.swift in Sources */,
 				6401BA4C271C33DF007C5B3F /* LoginViewController.swift in Sources */,
 				6401BA3B2719E566007C5B3F /* ViewController.swift in Sources */,
 				6401BA582722EC55007C5B3F /* User.swift in Sources */,
 				6401BA4E271C33F9007C5B3F /* LoginViewReactor.swift in Sources */,
 				6401BA372719E566007C5B3F /* AppDelegate.swift in Sources */,
 				6401BA392719E566007C5B3F /* SceneDelegate.swift in Sources */,
+				64A6417F272FE9D300C45B51 /* ToastWindow.swift in Sources */,
+				64A64182272FEB2C00C45B51 /* UIView+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

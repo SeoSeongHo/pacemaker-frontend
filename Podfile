@@ -20,5 +20,6 @@ target 'pacemaker-frontend' do
   pod 'Kingfisher'
   pod 'KakaoSDKAuth'
   pod 'KeychainAccess', '~> 4.2.1'
+  pod 'RxKeyboard'
 
 end

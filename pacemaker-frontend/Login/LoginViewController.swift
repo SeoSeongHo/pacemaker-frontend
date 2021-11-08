@@ -125,11 +125,13 @@ class LoginViewController: UIViewController, View {
         loginButton.rx.tap.map { _ in .signin }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
-
+        
         reactor.state.compactMap(\.user)
             .take(1)
             .subscribe(onNext: { user in
                 Toaster.shared.showToast(.success(user.email))
+                let navigationController = UINavigationController(rootViewController: MatchViewController(reactor: MatchViewReactor()))
+                UIApplication.shared.keyWindow?.rootViewController = navigationController
             })
             .disposed(by: disposeBag)
 

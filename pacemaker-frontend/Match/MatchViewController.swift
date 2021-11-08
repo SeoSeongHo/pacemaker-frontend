@@ -142,10 +142,22 @@ class MatchViewController: UIViewController, View {
     
     func bind(reactor: MatchViewReactor) {
         matchButton.rx.tap
-            .subscribe(onNext: { [weak self] _ in
+            .do(onNext: { [weak self] _ in
                 self?.preMatchContentView.isHidden = true
                 self?.findingMatchContentView.isHidden = false
                 self?.loadingActivityIndicator.startAnimating()
+            })
+            .delay(.seconds(2), scheduler: MainScheduler.asyncInstance)
+            .subscribe(onNext: { [weak self] _ in
+                let viewController = RunningViewController(reactor: RunningViewReactor())
+                let navigationController = UINavigationController(rootViewController: viewController).then {
+                    $0.modalPresentationStyle = .fullScreen
+                }
+                self?.present(navigationController, animated: true)
+
+                self?.preMatchContentView.isHidden = false
+                self?.findingMatchContentView.isHidden = true
+                self?.loadingActivityIndicator.stopAnimating()
             })
             .disposed(by: disposeBag)
         

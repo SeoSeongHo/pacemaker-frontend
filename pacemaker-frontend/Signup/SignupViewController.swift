@@ -50,7 +50,7 @@ class SignupViewController: UIViewController, View {
         
         topStackView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(100)
-            make.left.right.equalToSuperview().inset(50)
+            make.left.right.equalToSuperview().inset(24)
         }
         
         signupButton.snp.makeConstraints { make in
@@ -74,7 +74,12 @@ class SignupViewController: UIViewController, View {
     
     func bind(reactor: SignupViewReactor) {
         signupButton.rx.tap
+            .take(1)
+            .do(onNext: { _ in
+                Toaster.shared.setLoading(true)
+            })
             .subscribe(onNext: { [weak self] _ in
+                Toaster.shared.setLoading(false)
                 self?.dismiss(animated: true)
             })
             .disposed(by: disposeBag)

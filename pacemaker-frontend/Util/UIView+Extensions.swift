@@ -36,7 +36,7 @@ extension UIView {
         layer.insertSublayer(shadowLayer, at: 0)
     }
 
-    func roundCorner(_ radius: CGFloat? = nil, color: UIColor? = nil) {
+    func roundCorner(_ radius: CGFloat? = 7, color: UIColor? = nil) {
         layer.cornerRadius = radius ?? frame.height / 2.0
         layer.masksToBounds = true
         if let color = color {

@@ -10,26 +10,26 @@ import RxSwift
 
 final class MatchViewReactor: Reactor {
     struct State {
-        var distance: String?
-        var runner: String?
-        var user: User?
+        var distance: Distance
+        var runner: Runner
     }
 
     enum Action {
-        case setDistance(String?)
-        case setRunner(String?)
+        case setDistance(Distance)
+        case setRunner(Runner)
     }
 
     enum Mutation {
-        case setDistance(String?)
-        case setRunner(String?)
+        case setDistance(Distance)
+        case setRunner(Runner)
     }
 
     let initialState: State
     private let matchUseCase: MatchUseCase
 
     init(matchUseCase: MatchUseCase = DefaultMatchUseCase()) {
-        self.initialState = State()
+        self.initialState = State(distance: Distance.short, runner: Runner.two)
+        
         self.matchUseCase = matchUseCase
     }
     

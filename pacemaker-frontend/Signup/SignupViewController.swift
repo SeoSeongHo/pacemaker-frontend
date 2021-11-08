@@ -13,23 +13,22 @@ import Then
 import SnapKit
 
 class SignupViewController: UIViewController, View {
-    private let emailTextField = UITextField().then {
-        $0.placeholder = "email"
-        $0.keyboardType = .emailAddress
-        $0.layer.borderColor = UIColor.gray.cgColor
-        $0.layer.borderWidth = 1
+    private let emailTextField = InputField().then {
+        $0.textField.placeholder = "email"
+        $0.textField.keyboardType = .emailAddress
+        $0.titleLabel.text = "email"
     }
     
-    private let passwordTextField = UITextField().then {
-        $0.placeholder = "password"
-        $0.isSecureTextEntry = true
-        $0.layer.borderColor = UIColor.gray.cgColor
-        $0.layer.borderWidth = 1
+    private let passwordTextField = InputField().then {
+        $0.textField.placeholder = "password"
+        $0.titleLabel.text = "password"
+        $0.textField.isSecureTextEntry = true
     }
     
     private let signupButton = UIButton().then {
         $0.setTitle("Sign up", for: .normal)
         $0.backgroundColor = .gray
+        $0.roundCorner(7)
     }
     
     private let topStackView = UIStackView().then {
@@ -50,11 +49,14 @@ class SignupViewController: UIViewController, View {
         view.addSubview(signupButton)
         
         topStackView.snp.makeConstraints { make in
-            make.left.right.top.equalTo(view.safeAreaLayoutGuide).inset(50)
+            make.top.equalToSuperview().inset(100)
+            make.left.right.equalToSuperview().inset(50)
         }
         
         signupButton.snp.makeConstraints { make in
-            make.left.right.bottom.equalTo(view.safeAreaLayoutGuide).inset(50)
+            make.left.right.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(75)
+            make.height.equalTo(46)
         }
     }
     
@@ -77,13 +79,13 @@ class SignupViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
         
-        emailTextField.rx.text
+        emailTextField.textField.rx.text
             .distinctUntilChanged()
             .map { .setEmail($0) }
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
-        passwordTextField.rx.text
+        passwordTextField.textField.rx.text
             .distinctUntilChanged()
             .map { .setPassword($0) }
             .bind(to: reactor.action)

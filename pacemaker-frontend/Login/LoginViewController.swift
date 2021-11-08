@@ -82,7 +82,8 @@ class LoginViewController: UIViewController, View {
 
         bottomStackView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(150)
-            make.left.right.bottom.equalToSuperview().inset(50)
+            make.left.right.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(50)
         }
 
         loginButton.snp.makeConstraints { make in
@@ -128,8 +129,12 @@ class LoginViewController: UIViewController, View {
         
         reactor.state.compactMap(\.user)
             .take(1)
+            .do(onNext: { _ in
+                Toaster.shared.setLoading(true)
+            })
+            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .subscribe(onNext: { user in
-                Toaster.shared.showToast(.success(user.email))
+                Toaster.shared.setLoading(false)
                 let navigationController = UINavigationController(rootViewController: MatchViewController(reactor: MatchViewReactor()))
                 UIApplication.shared.keyWindow?.rootViewController = navigationController
             })

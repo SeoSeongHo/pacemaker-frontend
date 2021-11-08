@@ -13,6 +13,13 @@ import Then
 import SnapKit
 
 class MatchViewController: UIViewController, View {
+    private let preMatchContentView = UIView().then {
+        $0.isHidden = false
+    }
+    private let findingMatchContentView = UIView().then {
+        $0.isHidden = true
+    }
+    
     private let matchButton = UIButton().then {
         $0.setTitle("Match Start", for: .normal)
         $0.backgroundColor = .gray
@@ -43,15 +50,46 @@ class MatchViewController: UIViewController, View {
         $0.spacing = 10
         $0.alignment = .fill
     }
+
+    private let findingTitleLabel = UILabel().then {
+        $0.text = "Finding\nPacemakers..."
+        $0.numberOfLines = 2
+        $0.font = .systemFont(ofSize: 40, weight: .bold)
+    }
+    
+    private let loadingActivityIndicator = UIActivityIndicatorView().then {
+        $0.style = .large
+    }
+    
+    private let cancelButton = UIButton().then {
+        $0.setTitle("Cancel", for: .normal)
+        $0.backgroundColor = .gray
+        $0.roundCorner(7)
+    }
     
     var disposeBag = DisposeBag()
     
     private func configure() {
         view.backgroundColor = .white
         
-        view.addSubview(matchButton)
-        view.addSubview(bottomStackView)
-        view.addSubview(editButton)
+        view.addSubview(preMatchContentView)
+        view.addSubview(findingMatchContentView)
+        
+        preMatchContentView.addSubview(matchButton)
+        preMatchContentView.addSubview(bottomStackView)
+        preMatchContentView.addSubview(editButton)
+        
+        findingMatchContentView.addSubview(findingTitleLabel)
+        findingMatchContentView.addSubview(loadingActivityIndicator)
+        findingMatchContentView.addSubview(cancelButton)
+        
+        preMatchContentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        findingMatchContentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
         bottomStackView.addArrangedSubview(distanceLabel)
         bottomStackView.addArrangedSubview(runnerLabel)
@@ -72,6 +110,22 @@ class MatchViewController: UIViewController, View {
             make.left.right.equalToSuperview().inset(24)
             make.bottom.equalTo(editButton.snp.top).offset(-25)
         }
+        
+        findingTitleLabel.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(24)
+            make.centerY.equalToSuperview().multipliedBy(0.6)
+        }
+        
+        loadingActivityIndicator.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.centerX.equalToSuperview()
+        }
+        
+        cancelButton.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(75)
+            make.height.equalTo(46)
+        }
     }
     
     init(reactor: MatchViewReactor) {
@@ -89,7 +143,9 @@ class MatchViewController: UIViewController, View {
     func bind(reactor: MatchViewReactor) {
         matchButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
-                // TODO: Run view
+                self?.preMatchContentView.isHidden = true
+                self?.findingMatchContentView.isHidden = false
+                self?.loadingActivityIndicator.startAnimating()
             })
             .disposed(by: disposeBag)
         
@@ -98,6 +154,14 @@ class MatchViewController: UIViewController, View {
                 let viewController = MatchEditViewController(reactor: reactor)
                 let navigationController = UINavigationController(rootViewController: viewController)
                 self?.present(navigationController, animated: true)
+            })
+            .disposed(by: disposeBag)
+        
+        cancelButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                self?.preMatchContentView.isHidden = false
+                self?.findingMatchContentView.isHidden = true
+                self?.loadingActivityIndicator.stopAnimating()
             })
             .disposed(by: disposeBag)
         

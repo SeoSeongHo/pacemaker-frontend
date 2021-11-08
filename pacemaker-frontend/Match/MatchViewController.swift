@@ -13,21 +13,23 @@ import Then
 import SnapKit
 
 class MatchViewController: UIViewController, View {
-
     private let matchButton = UIButton().then {
         $0.setTitle("Match Start", for: .normal)
         $0.backgroundColor = .gray
         $0.roundCorner(7)
+        $0.titleLabel?.font = .systemFont(ofSize: 40, weight: .bold)
     }
     
-    private var distanceLabel = UILabel().then {
-        $0.text = "Distance : "
-        $0.font = .systemFont(ofSize: 20, weight: .bold)
+    private let distanceLabel = InputField().then {
+        $0.titleLabel.text = "Distance"
+        $0.textField.text = ""
+        $0.textField.isUserInteractionEnabled = false
     }
-
-    private var runnerLabel = UILabel().then {
-        $0.text = "Runners : "
-        $0.font = .systemFont(ofSize: 20, weight: .bold)
+    
+    private let runnerLabel = InputField().then {
+        $0.titleLabel.text = "Runners"
+        $0.textField.text = ""
+        $0.textField.isUserInteractionEnabled = false
     }
     
     private let editButton = UIButton().then {
@@ -36,7 +38,7 @@ class MatchViewController: UIViewController, View {
         $0.roundCorner(7)
     }
 
-    private let middleStackView = UIStackView().then {
+    private let bottomStackView = UIStackView().then {
         $0.axis = .vertical
         $0.spacing = 10
         $0.alignment = .fill
@@ -48,24 +50,27 @@ class MatchViewController: UIViewController, View {
         view.backgroundColor = .white
         
         view.addSubview(matchButton)
-        view.addSubview(middleStackView)
+        view.addSubview(bottomStackView)
         view.addSubview(editButton)
         
-        middleStackView.addArrangedSubview(distanceLabel)
-        middleStackView.addArrangedSubview(runnerLabel)
+        bottomStackView.addArrangedSubview(distanceLabel)
+        bottomStackView.addArrangedSubview(runnerLabel)
         
         matchButton.snp.makeConstraints { make in
-            make.left.top.right.equalTo(view.safeAreaLayoutGuide).inset(50)
-        }
-        
-        middleStackView.snp.makeConstraints { make in
-            make.centerY.equalToSuperview().multipliedBy(0.8)
-            make.centerX.equalToSuperview()
+            make.left.right.equalToSuperview().inset(24)
+            make.centerY.equalToSuperview().multipliedBy(0.6)
+            make.height.equalTo(69)
         }
         
         editButton.snp.makeConstraints { make in
-            make.left.right.bottom.equalToSuperview().inset(50)
+            make.left.right.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(75)
             make.height.equalTo(46)
+        }
+        
+        bottomStackView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(24)
+            make.bottom.equalTo(editButton.snp.top).offset(-25)
         }
     }
     
@@ -90,22 +95,21 @@ class MatchViewController: UIViewController, View {
         
         editButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
-                let viewController = MatchEditViewController(reactor: MatchViewReactor())
-                self?.present(viewController, animated: true)
+                let viewController = MatchEditViewController(reactor: reactor)
+                let navigationController = UINavigationController(rootViewController: viewController)
+                self?.present(navigationController, animated: true)
             })
             .disposed(by: disposeBag)
         
-        reactor.state.compactMap(\.distance)
-            .take(1)
+        reactor.state.map(\.distance)
             .subscribe(onNext: { distance in
-                self.distanceLabel.text = distance
+                self.distanceLabel.textField.text = distance.rawValue
             })
             .disposed(by: disposeBag)
         
-        reactor.state.compactMap(\.runner)
-            .take(1)
+        reactor.state.map(\.runner)
             .subscribe(onNext: { runner in
-                self.runnerLabel.text = runner
+                self.runnerLabel.textField.text = runner.rawValue
             })
             .disposed(by: disposeBag)
     }

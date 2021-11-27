@@ -38,6 +38,12 @@
 		64A641B02752340F00C45B51 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641AF2752340F00C45B51 /* RequestManager.swift */; };
 		64A641B22752345500C45B51 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641B12752345500C45B51 /* SessionManager.swift */; };
 		64A641B42752670900C45B51 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641B32752670800C45B51 /* UIColor+Extensions.swift */; };
+		F82DA0322752853100EC3C93 /* HistoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA0312752853100EC3C93 /* HistoryCell.swift */; };
+		F82DA0342752854D00EC3C93 /* HistoryDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA0332752854D00EC3C93 /* HistoryDetailViewController.swift */; };
+		F82DA0362752855D00EC3C93 /* HistoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA0352752855D00EC3C93 /* HistoryViewController.swift */; };
+		F82DA0382752856700EC3C93 /* HistoryViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA0372752856700EC3C93 /* HistoryViewReactor.swift */; };
+		F82DA03A2752858600EC3C93 /* TabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA0392752858600EC3C93 /* TabBarController.swift */; };
+		F82DA03C275286A700EC3C93 /* HistoryUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = F82DA03B275286A700EC3C93 /* HistoryUseCase.swift */; };
 		F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838FB42272290CE00526354 /* SignupViewReactor.swift */; };
 		F8C88E2E2730402100E8B0A1 /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C88E2D2730402100E8B0A1 /* MatchViewController.swift */; };
 		F8C88E302730404E00E8B0A1 /* MatchViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C88E2F2730404E00E8B0A1 /* MatchViewReactor.swift */; };
@@ -81,6 +87,12 @@
 		64A641B12752345500C45B51 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
 		64A641B32752670800C45B51 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		B221CE7C97EA4D6D05894288 /* Pods-pacemaker-frontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pacemaker-frontend.release.xcconfig"; path = "Target Support Files/Pods-pacemaker-frontend/Pods-pacemaker-frontend.release.xcconfig"; sourceTree = "<group>"; };
+		F82DA0312752853100EC3C93 /* HistoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryCell.swift; sourceTree = "<group>"; };
+		F82DA0332752854D00EC3C93 /* HistoryDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryDetailViewController.swift; sourceTree = "<group>"; };
+		F82DA0352752855D00EC3C93 /* HistoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewController.swift; sourceTree = "<group>"; };
+		F82DA0372752856700EC3C93 /* HistoryViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryViewReactor.swift; sourceTree = "<group>"; };
+		F82DA0392752858600EC3C93 /* TabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarController.swift; sourceTree = "<group>"; };
+		F82DA03B275286A700EC3C93 /* HistoryUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryUseCase.swift; sourceTree = "<group>"; };
 		F838FB42272290CE00526354 /* SignupViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewReactor.swift; sourceTree = "<group>"; };
 		F8C88E2D2730402100E8B0A1 /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
 		F8C88E2F2730404E00E8B0A1 /* MatchViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewReactor.swift; sourceTree = "<group>"; };
@@ -129,6 +141,7 @@
 		6401BA352719E566007C5B3F /* pacemaker-frontend */ = {
 			isa = PBXGroup;
 			children = (
+				F82DA0302752851600EC3C93 /* History */,
 				64A641A82752159100C45B51 /* Sounds */,
 				F8C88E2C2730401000E8B0A1 /* Match */,
 				64A6418527391B6C00C45B51 /* Running */,
@@ -171,6 +184,7 @@
 			children = (
 				6401BA542722EBFF007C5B3F /* UserUseCase.swift */,
 				F8C88E312730407900E8B0A1 /* MatchUseCase.swift */,
+				F82DA03B275286A700EC3C93 /* HistoryUseCase.swift */,
 			);
 			path = UseCase;
 			sourceTree = "<group>";
@@ -201,6 +215,7 @@
 				64A64181272FEB2C00C45B51 /* UIView+Extensions.swift */,
 				64A64183272FF09000C45B51 /* InputField.swift */,
 				64A641B32752670800C45B51 /* UIColor+Extensions.swift */,
+				F82DA0392752858600EC3C93 /* TabBarController.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -238,6 +253,17 @@
 				B221CE7C97EA4D6D05894288 /* Pods-pacemaker-frontend.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		F82DA0302752851600EC3C93 /* History */ = {
+			isa = PBXGroup;
+			children = (
+				F82DA0312752853100EC3C93 /* HistoryCell.swift */,
+				F82DA0332752854D00EC3C93 /* HistoryDetailViewController.swift */,
+				F82DA0352752855D00EC3C93 /* HistoryViewController.swift */,
+				F82DA0372752856700EC3C93 /* HistoryViewReactor.swift */,
+			);
+			path = History;
 			sourceTree = "<group>";
 		};
 		F8C88E2C2730401000E8B0A1 /* Match */ = {
@@ -373,16 +399,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F82DA0342752854D00EC3C93 /* HistoryDetailViewController.swift in Sources */,
 				F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */,
 				64A641B22752345500C45B51 /* SessionManager.swift in Sources */,
 				F8C88E2E2730402100E8B0A1 /* MatchViewController.swift in Sources */,
 				6401BA52271C3E36007C5B3F /* SignupViewController.swift in Sources */,
 				64A641972752101400C45B51 /* NotificationManager.swift in Sources */,
+				F82DA0362752855D00EC3C93 /* HistoryViewController.swift in Sources */,
 				64A6418D27394BDE00C45B51 /* RunningMapViewController.swift in Sources */,
 				64A6418B2739415700C45B51 /* RunningViewReactor.swift in Sources */,
 				64A6418727391B8600C45B51 /* RunningViewController.swift in Sources */,
 				64A641B02752340F00C45B51 /* RequestManager.swift in Sources */,
 				6401BA552722EBFF007C5B3F /* UserUseCase.swift in Sources */,
+				F82DA03C275286A700EC3C93 /* HistoryUseCase.swift in Sources */,
 				64A64184272FF09000C45B51 /* InputField.swift in Sources */,
 				64A641B42752670900C45B51 /* UIColor+Extensions.swift in Sources */,
 				F8C88E302730404E00E8B0A1 /* MatchViewReactor.swift in Sources */,
@@ -391,7 +420,10 @@
 				6401BA3B2719E566007C5B3F /* ViewController.swift in Sources */,
 				6401BA582722EC55007C5B3F /* User.swift in Sources */,
 				F8C88E342730408B00E8B0A1 /* MatchEditViewController.swift in Sources */,
+				F82DA0382752856700EC3C93 /* HistoryViewReactor.swift in Sources */,
 				6401BA4E271C33F9007C5B3F /* LoginViewReactor.swift in Sources */,
+				F82DA0322752853100EC3C93 /* HistoryCell.swift in Sources */,
+				F82DA03A2752858600EC3C93 /* TabBarController.swift in Sources */,
 				6401BA372719E566007C5B3F /* AppDelegate.swift in Sources */,
 				64A641892739278F00C45B51 /* LocationManager.swift in Sources */,
 				6401BA392719E566007C5B3F /* SceneDelegate.swift in Sources */,

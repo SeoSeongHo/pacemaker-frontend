@@ -131,8 +131,8 @@ class LoginViewController: UIViewController, View {
         reactor.state.compactMap(\.user)
             .take(1)
             .subscribe(onNext: { user in
-                let navigationController = UINavigationController(rootViewController: MatchViewController(reactor: MatchViewReactor()))
-                UIApplication.shared.keyWindow?.rootViewController = navigationController
+                let viewController = TabBarController()
+                UIApplication.shared.keyWindow?.rootViewController = viewController
             })
             .disposed(by: disposeBag)
 

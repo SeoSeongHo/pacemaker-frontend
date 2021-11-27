@@ -228,7 +228,7 @@ final class ToastView: UIView {
         messageLabel.text = type.message
         imageView.image = type.image
         backgroundColor = .white
-        roundCorner(7, color: .gray)
+        roundCorner(7, color: .primary)
         addSubview(imageView)
         addSubview(messageLabel)
 

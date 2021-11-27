@@ -12,25 +12,28 @@ final class SignupViewReactor: Reactor {
     struct State {
         var email: String?
         var password: String?
+        var nickname: String?
         var user : User?
     }
 
     enum Action {
         case setEmail(String?)
         case setPassword(String?)
+        case setNickname(String?)
         case signup
     }
 
     enum Mutation {
         case setEmail(String?)
         case setPassword(String?)
+        case setNickname(String?)
         case setUser(User)
     }
 
     let initialState: State
     private let userUseCase: UserUseCase
 
-    init(userUseCase: UserUseCase = DefaultUserUseCase()) {
+    init(userUseCase: UserUseCase = DefaultUserUseCase.shared) {
         self.initialState = State()
         self.userUseCase = userUseCase
     }
@@ -42,13 +45,28 @@ final class SignupViewReactor: Reactor {
         case .setPassword(let password):
             return .just(.setPassword(password))
         case .signup:
-            guard let email = currentState.email, let password = currentState.password else {
-                // TODO: show error toast
+            guard let email = currentState.email,
+                  let password = currentState.password,
+                  let nickname = currentState.nickname,
+                  !email.isEmpty,
+                  !password.isEmpty,
+                  !nickname.isEmpty else {
+                Toaster.shared.showToast(.error("There is unentered field"))
                 return .empty()
             }
-            return userUseCase.signup(email: email, password: password)
+            Toaster.shared.setLoading(true)
+            return userUseCase.signup(email: email, password: password, nickname: nickname)
                 .asObservable()
-                .map { .setUser($0) }
+                .map { .setUser($0.user) }
+                .do(onNext: { _ in
+                    Toaster.shared.setLoading(false)
+                    Toaster.shared.showToast(.success("Signup completed"))
+                }, onError: { error in
+                    Toaster.shared.setLoading(false)
+                    Toaster.shared.showToast(.error(error.localizedDescription))
+                })
+        case .setNickname(let nickname):
+            return .just(.setNickname(nickname))
         }
     }
 
@@ -61,6 +79,8 @@ final class SignupViewReactor: Reactor {
             newState.password = password
         case .setUser(let user):
             newState.user = user
+        case .setNickname(let nickname):
+            newState.nickname = nickname
         }
         return newState
     }

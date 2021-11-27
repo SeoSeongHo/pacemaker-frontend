@@ -35,6 +35,9 @@
 		64A641A72752158D00C45B51 /* overtaken.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 64A6419F2752158D00C45B51 /* overtaken.mp3 */; };
 		64A641AA2752168600C45B51 /* overtaking.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 64A641A92752168600C45B51 /* overtaking.mp3 */; };
 		64A641AE2752177D00C45B51 /* first.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 64A641AD2752177D00C45B51 /* first.mp3 */; };
+		64A641B02752340F00C45B51 /* RequestManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641AF2752340F00C45B51 /* RequestManager.swift */; };
+		64A641B22752345500C45B51 /* SessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641B12752345500C45B51 /* SessionManager.swift */; };
+		64A641B42752670900C45B51 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 64A641B32752670800C45B51 /* UIColor+Extensions.swift */; };
 		F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F838FB42272290CE00526354 /* SignupViewReactor.swift */; };
 		F8C88E2E2730402100E8B0A1 /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C88E2D2730402100E8B0A1 /* MatchViewController.swift */; };
 		F8C88E302730404E00E8B0A1 /* MatchViewReactor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8C88E2F2730404E00E8B0A1 /* MatchViewReactor.swift */; };
@@ -74,6 +77,9 @@
 		64A6419F2752158D00C45B51 /* overtaken.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = overtaken.mp3; sourceTree = "<group>"; };
 		64A641A92752168600C45B51 /* overtaking.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = overtaking.mp3; sourceTree = "<group>"; };
 		64A641AD2752177D00C45B51 /* first.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = first.mp3; sourceTree = "<group>"; };
+		64A641AF2752340F00C45B51 /* RequestManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestManager.swift; sourceTree = "<group>"; };
+		64A641B12752345500C45B51 /* SessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionManager.swift; sourceTree = "<group>"; };
+		64A641B32752670800C45B51 /* UIColor+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extensions.swift"; sourceTree = "<group>"; };
 		B221CE7C97EA4D6D05894288 /* Pods-pacemaker-frontend.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pacemaker-frontend.release.xcconfig"; path = "Target Support Files/Pods-pacemaker-frontend/Pods-pacemaker-frontend.release.xcconfig"; sourceTree = "<group>"; };
 		F838FB42272290CE00526354 /* SignupViewReactor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupViewReactor.swift; sourceTree = "<group>"; };
 		F8C88E2D2730402100E8B0A1 /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
@@ -182,6 +188,8 @@
 			children = (
 				64A641882739278F00C45B51 /* LocationManager.swift */,
 				64A641962752101400C45B51 /* NotificationManager.swift */,
+				64A641AF2752340F00C45B51 /* RequestManager.swift */,
+				64A641B12752345500C45B51 /* SessionManager.swift */,
 			);
 			path = Manager;
 			sourceTree = "<group>";
@@ -192,6 +200,7 @@
 				64A6417E272FE9D300C45B51 /* ToastWindow.swift */,
 				64A64181272FEB2C00C45B51 /* UIView+Extensions.swift */,
 				64A64183272FF09000C45B51 /* InputField.swift */,
+				64A641B32752670800C45B51 /* UIColor+Extensions.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -365,14 +374,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				F838FB43272290CE00526354 /* SignupViewReactor.swift in Sources */,
+				64A641B22752345500C45B51 /* SessionManager.swift in Sources */,
 				F8C88E2E2730402100E8B0A1 /* MatchViewController.swift in Sources */,
 				6401BA52271C3E36007C5B3F /* SignupViewController.swift in Sources */,
 				64A641972752101400C45B51 /* NotificationManager.swift in Sources */,
 				64A6418D27394BDE00C45B51 /* RunningMapViewController.swift in Sources */,
 				64A6418B2739415700C45B51 /* RunningViewReactor.swift in Sources */,
 				64A6418727391B8600C45B51 /* RunningViewController.swift in Sources */,
+				64A641B02752340F00C45B51 /* RequestManager.swift in Sources */,
 				6401BA552722EBFF007C5B3F /* UserUseCase.swift in Sources */,
 				64A64184272FF09000C45B51 /* InputField.swift in Sources */,
+				64A641B42752670900C45B51 /* UIColor+Extensions.swift in Sources */,
 				F8C88E302730404E00E8B0A1 /* MatchViewReactor.swift in Sources */,
 				6401BA4C271C33DF007C5B3F /* LoginViewController.swift in Sources */,
 				F8C88E322730407900E8B0A1 /* MatchUseCase.swift in Sources */,

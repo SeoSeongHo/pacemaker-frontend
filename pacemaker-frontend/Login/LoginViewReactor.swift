@@ -30,7 +30,7 @@ final class LoginViewReactor: Reactor {
     let initialState: State
     private let userUseCase: UserUseCase
 
-    init(userUseCase: UserUseCase = DefaultUserUseCase()) {
+    init(userUseCase: UserUseCase = DefaultUserUseCase.shared) {
         self.initialState = State()
         self.userUseCase = userUseCase
     }
@@ -42,12 +42,22 @@ final class LoginViewReactor: Reactor {
         case .setPassword(let password):
             return .just(.setPassword(password))
         case .signin:
-            guard let email = currentState.email, let password = currentState.password else {
+            guard let email = currentState.email,
+                  !email.isEmpty,
+                  let password = currentState.password,
+                  !password.isEmpty else {
                 // TODO: show error toast
                 return .empty()
             }
+            Toaster.shared.setLoading(true)
             return userUseCase.signin(email: email, password: password)
                 .asObservable()
+                .do(onNext: { _ in
+                    Toaster.shared.setLoading(false)
+                }, onError: { error in
+                    Toaster.shared.setLoading(false)
+                    Toaster.shared.showToast(.error(error.localizedDescription))
+                })
                 .map { .setUser($0) }
         }
     }

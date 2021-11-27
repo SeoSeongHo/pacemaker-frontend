@@ -22,7 +22,7 @@ class MatchViewController: UIViewController, View {
     
     private let matchButton = UIButton().then {
         $0.setTitle("Match Start", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
         $0.titleLabel?.font = .systemFont(ofSize: 40, weight: .bold)
     }
@@ -41,7 +41,7 @@ class MatchViewController: UIViewController, View {
     
     private let editButton = UIButton().then {
         $0.setTitle("Edit", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
 
@@ -54,6 +54,7 @@ class MatchViewController: UIViewController, View {
     private let findingTitleLabel = UILabel().then {
         $0.text = "Finding\nPacemakers..."
         $0.numberOfLines = 2
+        $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 40, weight: .bold)
     }
     
@@ -63,7 +64,7 @@ class MatchViewController: UIViewController, View {
     
     private let cancelButton = UIButton().then {
         $0.setTitle("Cancel", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
     
@@ -137,6 +138,7 @@ class MatchViewController: UIViewController, View {
             options: [.alert, .sound],
             completionHandler: { _, _ in }
         )
+        _ = DefaultLocationManager.shared
 
         configure()
     }
@@ -147,22 +149,60 @@ class MatchViewController: UIViewController, View {
     
     func bind(reactor: MatchViewReactor) {
         matchButton.rx.tap
-            .do(onNext: { [weak self] _ in
-                self?.preMatchContentView.isHidden = true
-                self?.findingMatchContentView.isHidden = false
-                self?.loadingActivityIndicator.startAnimating()
+            .map { _ in .match }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        cancelButton.rx.tap
+            .map { _ in .cancel }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
+        reactor.state.map(\.status)
+            .distinctUntilChanged()
+            .subscribe(onNext: { [weak self] status in
+                switch status {
+                case .idle:
+                    self?.preMatchContentView.isHidden = false
+                    self?.findingMatchContentView.isHidden = true
+                    self?.loadingActivityIndicator.stopAnimating()
+                case .finding:
+                    self?.preMatchContentView.isHidden = true
+                    self?.findingMatchContentView.isHidden = false
+                    self?.loadingActivityIndicator.startAnimating()
+                    self?.findingTitleLabel.text = "Finding\nPacemakers..."
+                case .ready:
+                    self?.loadingActivityIndicator.stopAnimating()
+                }
             })
-            .delay(.seconds(2), scheduler: MainScheduler.asyncInstance)
-            .subscribe(onNext: { [weak self] _ in
-                let viewController = RunningViewController(reactor: RunningViewReactor())
+            .disposed(by: disposeBag)
+
+        reactor.matchPublisher
+            .flatMap { [weak self] match -> Observable<Match> in
+                let timeinterval = Int(max(0, match.startDatetime.timeIntervalSinceNow))
+                return Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+                    .take(timeinterval + 1)
+                    .do(onNext: { [weak self] time in
+                        if time >= timeinterval - 1 {
+                            self?.findingTitleLabel.text = "Start!"
+                        } else {
+                            self?.findingTitleLabel.text = "Ready...\(timeinterval - 1 - time)"
+                        }
+                    })
+                    .buffer(timeSpan: .seconds(timeinterval), count: timeinterval + 1, scheduler: MainScheduler.instance)
+                    .take(1)
+                    .map { _ in match }
+            }
+            .subscribe(onNext: { [weak self] match in
+                let viewController = RunningViewController(reactor: RunningViewReactor(
+                    distance: reactor.currentState.distance.rawValue,
+                    match: match
+                ))
                 let navigationController = UINavigationController(rootViewController: viewController).then {
                     $0.modalPresentationStyle = .fullScreen
                 }
                 self?.present(navigationController, animated: true)
-
-                self?.preMatchContentView.isHidden = false
-                self?.findingMatchContentView.isHidden = true
-                self?.loadingActivityIndicator.stopAnimating()
+                reactor.action.onNext(.start)
             })
             .disposed(by: disposeBag)
         
@@ -184,13 +224,13 @@ class MatchViewController: UIViewController, View {
         
         reactor.state.map(\.distance)
             .subscribe(onNext: { distance in
-                self.distanceLabel.textField.text = distance.rawValue
+                self.distanceLabel.textField.text = distance.title
             })
             .disposed(by: disposeBag)
         
         reactor.state.map(\.runner)
             .subscribe(onNext: { runner in
-                self.runnerLabel.textField.text = runner.rawValue
+                self.runnerLabel.textField.text = runner.title
             })
             .disposed(by: disposeBag)
     }

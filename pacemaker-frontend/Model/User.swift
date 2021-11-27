@@ -7,7 +7,13 @@
 
 import Foundation
 
-struct User {
-    var id: UUID = UUID()
-    var email: String
+struct User: Codable {
+    let id: Int64
+    let email: String
+    let nickname: String
+}
+
+struct SignupResponse: Codable {
+    let token: String
+    let user: User
 }

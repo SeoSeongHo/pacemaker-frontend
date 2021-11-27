@@ -133,6 +133,11 @@ class MatchViewController: UIViewController, View {
 
         defer { self.reactor = reactor }
 
+        UNUserNotificationCenter.current().requestAuthorization(
+            options: [.alert, .sound],
+            completionHandler: { _, _ in }
+        )
+
         configure()
     }
     

@@ -8,12 +8,20 @@
 import UIKit
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
 
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        UNUserNotificationCenter.current().delegate = self
+        //actions defination
+        let action1 = UNNotificationAction(identifier: "action1", title: "Action First", options: [.foreground])
+        let action2 = UNNotificationAction(identifier: "action2", title: "Action Second", options: [.foreground])
+
+        let category = UNNotificationCategory(identifier: "actionCategory", actions: [action1,action2], intentIdentifiers: [], options: [])
+
+        UNUserNotificationCenter.current().setNotificationCategories([category])
         return true
     }
 
@@ -32,5 +40,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
-}
+    func userNotificationCenter(
+        _ center: UNUserNotificationCenter,
+        willPresent notification: UNNotification,
+        withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void
+    ) {
+        print("$$$")
+        completionHandler([.sound, .alert])
+    }
 
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print(response.notification.request.content.userInfo)
+        completionHandler()
+    }
+}

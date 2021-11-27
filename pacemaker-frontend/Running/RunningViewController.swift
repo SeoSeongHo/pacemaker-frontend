@@ -110,6 +110,8 @@ class RunningViewController: UIViewController, View {
     }
 
     func bind(reactor: RunningViewReactor) {
+        reactor.action.onNext(.start)
+
         giveupButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 let actions = [
@@ -131,7 +133,7 @@ class RunningViewController: UIViewController, View {
 
         mapButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
-                let viewController = RunningMapViewController(reactor: RunningMapViewReactor())
+                let viewController = RunningMapViewController(reactor: reactor)
                 self?.navigationController?.pushViewController(viewController, animated: true)
             })
             .disposed(by: disposeBag)
@@ -142,9 +144,18 @@ class RunningViewController: UIViewController, View {
                 let second = time % 60
                 self?.runningTimeLabel.text = "\(minute < 10 ? "0\(minute)" : "\(minute)"):\(second < 10 ? "0\(second)" : "\(second)")"
 
-                self?.progressView.setProgress(Double(time) / 100.0)
                 self?.progressView1.setProgress(Double(time) / 200.0)
                 self?.progressView2.setProgress(Double(time) / 170.0)
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map(\.distance)
+            .subscribe(onNext: { [weak self] distance in
+                let progress = distance / 1000.0
+                self?.progressView.setProgress(distance / 1000.0)
+                if progress > 1 {
+                    reactor.action.onNext(.finish)
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -156,46 +167,49 @@ class ProgressView: UIView {
         $0.backgroundColor = .lightGray
     }
 
-    private let progressIndicatorView = UIView()
+    private let progressIndicatorView = UIView().then {
+        $0.roundCorner(5, color: .black)
+        $0.backgroundColor = .white
+    }
 
     let progressLabel = UILabel().then {
         $0.text = "me"
+        $0.font = .systemFont(ofSize: 20, weight: .bold)
     }
 
-    private let progressIndicator = UIView().then {
-        $0.roundCorner(10)
-        $0.backgroundColor = .black
+    private let progressIndicator = UIImageView().then {
+        $0.image = UIImage(systemName: "figure.walk")
+        $0.tintColor = .black
     }
 
     override init(frame: CGRect) {
         super.init(frame: frame)
 
         addSubview(progressView)
+        addSubview(progressLabel)
         addSubview(progressIndicatorView)
         progressIndicatorView.addSubview(progressIndicator)
-        progressIndicatorView.addSubview(progressLabel)
+
+        progressLabel.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().inset(7.5)
+            make.bottom.equalToSuperview().inset(12.5)
             make.left.right.equalToSuperview().inset(10)
             make.height.equalTo(5)
         }
 
-        progressLabel.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(progressIndicator.snp.top).offset(-5)
-            make.top.equalToSuperview()
+        progressIndicatorView.snp.makeConstraints { make in
+            make.bottom.equalToSuperview()
+            make.left.equalToSuperview().inset(0)
+            make.top.equalTo(progressLabel.snp.bottom).offset(30)
+            make.size.equalTo(30)
         }
 
         progressIndicator.snp.makeConstraints { make in
-            make.bottom.equalToSuperview()
-            make.left.right.equalToSuperview()
-            make.size.equalTo(20)
-        }
-
-        progressIndicatorView.snp.makeConstraints { make in
-            make.top.bottom.equalToSuperview()
-            make.left.equalToSuperview().inset(0)
+            make.edges.equalToSuperview().inset(5)
         }
     }
 
@@ -205,7 +219,7 @@ class ProgressView: UIView {
 
     func setProgress(_ progress: Double) {
         let progress = min(progress, 1)
-        let inset = bounds.width * progress
+        let inset = (bounds.width - 20) * progress
 
         progressIndicatorView.snp.updateConstraints { make in
             make.left.equalToSuperview().inset(inset)

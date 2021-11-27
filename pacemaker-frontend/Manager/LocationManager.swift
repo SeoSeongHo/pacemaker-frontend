@@ -10,9 +10,11 @@ import RxSwift
 import RxCocoa
 
 protocol LocationManager {
-    func getCurrentCoord() -> CLLocationCoordinate2D?
     var isLocationEnabled: Bool { get }
     var currentLocation: Observable<CLLocation?> { get }
+
+    func start()
+    func stop()
 }
 
 final class DefaultLocationManager: NSObject, LocationManager, CLLocationManagerDelegate {
@@ -32,16 +34,19 @@ final class DefaultLocationManager: NSObject, LocationManager, CLLocationManager
         super.init()
         self.locationManager = CLLocationManager.init()
         self.locationManager.delegate = self
-        locationManager.startUpdatingLocation()
+
         let authorizationStatus = locationManager.authorizationStatus
         if authorizationStatus == .notDetermined {
             self.locationManager.requestWhenInUseAuthorization()
         }
     }
 
-    func getCurrentCoord() -> CLLocationCoordinate2D? {
+    func start() {
         locationManager.startUpdatingLocation()
-        return myLocation.value.map { $0.coordinate }
+    }
+
+    func stop() {
+        locationManager.stopUpdatingLocation()
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {

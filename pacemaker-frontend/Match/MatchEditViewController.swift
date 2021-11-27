@@ -12,16 +12,31 @@ import ReactorKit
 import Then
 import SnapKit
 
-enum Distance: String, CaseIterable {
-    case short = "1000m"
-    case middle = "1500m"
-    case long = "2000m"
+enum Distance: Int, CaseIterable {
+    case short = 1000
+    case middle = 1500
+    case long = 2000
+
+    var title: String {
+        switch self {
+        case .short:
+            return "1000m"
+        case .middle:
+            return "1500m"
+        case .long:
+            return "2000m"
+        }
+    }
 }
 
-enum Runner: String, CaseIterable {
-    case two = "2"
-    case three = "3"
-    case four = "4"
+enum Runner: Int, CaseIterable {
+    case two = 2
+    case three = 3
+    case four = 4
+
+    var title: String {
+        "\(self.rawValue)"
+    }
 }
 
 class MatchEditViewController: UIViewController, View {
@@ -51,7 +66,7 @@ class MatchEditViewController: UIViewController, View {
     
     private let confirmButton = UIButton().then {
         $0.setTitle("Confirm", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
     

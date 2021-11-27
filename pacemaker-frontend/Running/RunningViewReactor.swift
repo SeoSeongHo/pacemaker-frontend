@@ -28,11 +28,17 @@ final class RunningViewReactor: Reactor {
     let initialState: State
     private let locationManager: LocationManager
     private let notificationManager: NotificationManager
+    let match: Match
+    let distance: Int
 
     init(
+        distance: Int,
+        match: Match,
         locationManager: LocationManager = DefaultLocationManager.shared,
         notificationManager: NotificationManager = DefaultNotificationManager()
     ) {
+        self.distance = distance
+        self.match = match
         self.initialState = State()
         self.locationManager = locationManager
         self.notificationManager = notificationManager
@@ -66,6 +72,27 @@ final class RunningViewReactor: Reactor {
             }
         }
         return newState
+    }
+
+    func notification(for event: MatchEvent) {
+        switch event {
+        case .LEFT_100M:
+            notificationManager.left100()
+        case .LEFT_50M:
+            notificationManager.left50()
+        case .OVERTAKEN:
+            notificationManager.overtaken()
+        case .OVERTAKING:
+            notificationManager.overtaking()
+        case .FINISH:
+            notificationManager.finish()
+        case .FINISH_OTHER:
+            notificationManager.finishOther()
+        case .DONE:
+            notificationManager.done()
+        case .FIRST_PLACE:
+            notificationManager.firstPlace()
+        }
     }
 }
 

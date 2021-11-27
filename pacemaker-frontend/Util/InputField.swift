@@ -63,7 +63,7 @@ class InputField: UIView {
             textField.roundCorner(7, color: .red)
             errorLabel.isHidden = false
         } else {
-            textField.roundCorner(7, color: .gray)
+            textField.roundCorner(7, color: .primary)
             errorLabel.isHidden = true
         }
     }

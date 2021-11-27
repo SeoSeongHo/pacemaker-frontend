@@ -24,10 +24,16 @@ class SignupViewController: UIViewController, View {
         $0.titleLabel.text = "password"
         $0.textField.isSecureTextEntry = true
     }
+
+    private let nicknameTextField = InputField().then {
+        $0.textField.placeholder = "nickname"
+        $0.textField.keyboardType = .default
+        $0.titleLabel.text = "nickname"
+    }
     
     private let signupButton = UIButton().then {
         $0.setTitle("Sign up", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
     
@@ -45,6 +51,7 @@ class SignupViewController: UIViewController, View {
         view.addSubview(topStackView)
         topStackView.addArrangedSubview(emailTextField)
         topStackView.addArrangedSubview(passwordTextField)
+        topStackView.addArrangedSubview(nicknameTextField)
         
         view.addSubview(signupButton)
         
@@ -74,14 +81,8 @@ class SignupViewController: UIViewController, View {
     
     func bind(reactor: SignupViewReactor) {
         signupButton.rx.tap
-            .take(1)
-            .do(onNext: { _ in
-                Toaster.shared.setLoading(true)
-            })
-            .subscribe(onNext: { [weak self] _ in
-                Toaster.shared.setLoading(false)
-                self?.dismiss(animated: true)
-            })
+            .map { .signup }
+            .bind(to: reactor.action)
             .disposed(by: disposeBag)
         
         emailTextField.textField.rx.text
@@ -96,10 +97,16 @@ class SignupViewController: UIViewController, View {
             .bind(to: reactor.action)
             .disposed(by: disposeBag)
 
+        nicknameTextField.textField.rx.text
+            .distinctUntilChanged()
+            .map { .setNickname($0) }
+            .bind(to: reactor.action)
+            .disposed(by: disposeBag)
+
         reactor.state.compactMap(\.user)
             .take(1)
-            .subscribe(onNext: { user in
-                // TODO: user 저장, main view로 보냄
+            .subscribe(onNext: { [weak self] user in
+                self?.dismiss(animated: true, completion: nil)
             })
             .disposed(by: disposeBag)
     }

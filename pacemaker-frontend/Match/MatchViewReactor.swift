@@ -7,14 +7,26 @@
 
 import ReactorKit
 import RxSwift
+import RxCocoa
 
 final class MatchViewReactor: Reactor {
+    enum Status {
+        case idle
+        case finding
+        case ready
+    }
     struct State {
         var distance: Distance
         var runner: Runner
+        var status: Status = .idle
     }
 
+    let matchPublisher = PublishRelay<Match>()
+
     enum Action {
+        case match
+        case cancel
+        case start
         case setDistance(Distance)
         case setRunner(Runner)
     }
@@ -22,6 +34,7 @@ final class MatchViewReactor: Reactor {
     enum Mutation {
         case setDistance(Distance)
         case setRunner(Runner)
+        case setStatus(Status)
     }
 
     let initialState: State
@@ -35,6 +48,16 @@ final class MatchViewReactor: Reactor {
     
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
+        case .match:
+            return .concat(
+                .just(.setStatus(.finding)),
+                pollMatch()
+            )
+        case .cancel:
+            return .just(.setStatus(.idle))
+        case .start:
+            return .just(.setStatus(.idle))
+
         case .setDistance(let distance):
             return .just(.setDistance(distance))
         case .setRunner(let runner):
@@ -49,7 +72,36 @@ final class MatchViewReactor: Reactor {
             newState.distance = distance
         case .setRunner(let runner):
             newState.runner = runner
+        case .setStatus(let status):
+            newState.status = status
         }
         return newState
+    }
+
+    func pollMatch() -> Observable<Mutation> {
+        return matchUseCase.start(
+            distance: currentState.distance.rawValue,
+            memberCount: currentState.runner.rawValue
+        )
+            .asObservable()
+            .flatMap { [weak self] match -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
+                if match.status == .DONE {
+                    self.matchPublisher.accept(match)
+                    return .just(.setStatus(.ready))
+                } else {
+                    guard self.currentState.status == .finding else { return .empty() }
+                    return Observable<Void>.just(())
+                        .delay(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                        .flatMap { [weak self] _ -> Observable<Mutation> in
+                            guard let self = self else { return .empty() }
+                            return self.pollMatch()
+                        }
+                }
+            }
+            .catch {
+                Toaster.shared.showToast(.error($0.localizedDescription))
+                return .just(.setStatus(.idle))
+            }
     }
 }

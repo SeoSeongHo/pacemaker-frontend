@@ -20,6 +20,7 @@ class LoginViewController: UIViewController, View {
     private let titleLabel = UILabel().then {
         $0.text = "Pacemaker"
         $0.font = .systemFont(ofSize: 40, weight: .bold)
+        $0.textColor = .primary
     }
 
     private let emailTextField = InputField().then {
@@ -36,13 +37,13 @@ class LoginViewController: UIViewController, View {
 
     private let loginButton = UIButton().then {
         $0.setTitle("Sign in", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
 
     private let signupButton = UIButton().then {
         $0.setTitle("sign up", for: .normal)
-        $0.setTitleColor(.gray, for: .normal)
+        $0.setTitleColor(.primary, for: .normal)
     }
 
     private let bottomStackView = UIStackView().then {
@@ -129,12 +130,7 @@ class LoginViewController: UIViewController, View {
         
         reactor.state.compactMap(\.user)
             .take(1)
-            .do(onNext: { _ in
-                Toaster.shared.setLoading(true)
-            })
-            .delay(.seconds(1), scheduler: MainScheduler.instance)
             .subscribe(onNext: { user in
-                Toaster.shared.setLoading(false)
                 let navigationController = UINavigationController(rootViewController: MatchViewController(reactor: MatchViewReactor()))
                 UIApplication.shared.keyWindow?.rootViewController = navigationController
             })

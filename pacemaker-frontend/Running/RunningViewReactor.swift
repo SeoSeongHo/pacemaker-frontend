@@ -11,11 +11,14 @@ import CoreLocation
 
 final class RunningViewReactor: Reactor {
     struct State {
-        var location: CLLocation?
+        var locations: [CLLocation] = []
+        var distance: CLLocationDistance = 0
+        var speed: CLLocationSpeed = 0
     }
 
     enum Action {
         case start
+        case finish
     }
 
     enum Mutation {
@@ -24,16 +27,29 @@ final class RunningViewReactor: Reactor {
 
     let initialState: State
     private let locationManager: LocationManager
+    private let notificationManager: NotificationManager
 
-    init(locationManager: LocationManager = DefaultLocationManager.shared) {
+    init(
+        locationManager: LocationManager = DefaultLocationManager.shared,
+        notificationManager: NotificationManager = DefaultNotificationManager()
+    ) {
         self.initialState = State()
         self.locationManager = locationManager
+        self.notificationManager = notificationManager
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
         switch action {
         case .start:
-            return locationManager.currentLocation.map { .setLocation($0) }
+            notificationManager.start()
+            locationManager.start()
+            return locationManager.currentLocation
+                .skip(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                .map { .setLocation($0) }
+        case .finish:
+            notificationManager.finish()
+            locationManager.stop()
+            return .empty()
         }
     }
 
@@ -41,7 +57,13 @@ final class RunningViewReactor: Reactor {
         var newState = state
         switch mutation {
         case .setLocation(let location):
-            newState.location = location
+            if let location = location {
+                newState.speed = location.speed
+                if let prevLocation = newState.locations.last {
+                    newState.distance += location.distance(from: prevLocation)
+                }
+                newState.locations.append(location)
+            }
         }
         return newState
     }

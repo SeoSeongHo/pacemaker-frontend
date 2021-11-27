@@ -15,6 +15,11 @@ import RxKeyboard
 import MapKit
 
 class RunningMapViewController: UIViewController, View {
+    class MyPointAnnotation : MKPointAnnotation {
+        var isStartingPoint = false
+        var isEndingPoint = false
+    }
+
     private let mapView = MKMapView().then {
         $0.showsUserLocation = true
     }
@@ -52,6 +57,7 @@ class RunningMapViewController: UIViewController, View {
     }
 
     var disposeBag = DisposeBag()
+    private var route: MKOverlay?
 
     private func configure() {
         mapView.delegate = self
@@ -86,7 +92,7 @@ class RunningMapViewController: UIViewController, View {
         super.viewDidLoad()
     }
 
-    init(reactor: RunningMapViewReactor) {
+    init(reactor: RunningViewReactor) {
         super.init(nibName: nil, bundle: nil)
 
         defer { self.reactor = reactor }
@@ -98,32 +104,21 @@ class RunningMapViewController: UIViewController, View {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func bind(reactor: RunningMapViewReactor) {
-        reactor.action.onNext(.start)
-
+    func bind(reactor: RunningViewReactor) {
         backButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
                 self?.navigationController?.popViewController(animated: true)
             })
             .disposed(by: disposeBag)
 
-        reactor.state.compactMap(\.location)
+        reactor.state.map(\.distance)
             .distinctUntilChanged()
-            .scan((0.0, nil)) { (prev: (Double, CLLocation?), current) in
-                let (distance, prevValue) = prev
-                guard let prevValue = prevValue else {
-                    return (distance, current)
-                }
-
-                let currentDistance = distance + current.distance(from: prevValue)
-                return (currentDistance, current)
-            }
             .subscribe(onNext: { [distanceLabel] distance in
-                distanceLabel.textField.text = "\(Int(distance.0))/1000m"
+                distanceLabel.textField.text = "\(Int(distance))/1000m"
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map(\.location)
+        reactor.state.map(\.locations.last)
             .distinctUntilChanged()
             .subscribe(onNext: { [mapView, speedLabel] location in
                 if let userLocation = location?.coordinate {
@@ -132,6 +127,17 @@ class RunningMapViewController: UIViewController, View {
                 }
 
                 speedLabel.textField.text = location.map { "\($0.speed)m/s" }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map { $0.locations.map { $0.coordinate } }
+            .subscribe(onNext: { [weak self] coordinates in
+                let polyline = MKPolyline(coordinates: coordinates, count: coordinates.count)
+                if let prevRoute = self?.route {
+                    self?.mapView.removeOverlay(prevRoute)
+                }
+                self?.route = polyline
+                self?.mapView.addOverlay(polyline)
             })
             .disposed(by: disposeBag)
     }
@@ -143,5 +149,16 @@ extension RunningMapViewController: MKMapViewDelegate {
         guard !annotation.isKind(of: MKUserLocation.self) else { return nil }
 
         return MKAnnotationView()
+    }
+
+    func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+        if let routePolyline = overlay as? MKPolyline {
+            let renderer = MKPolylineRenderer(polyline: routePolyline)
+            renderer.strokeColor = UIColor.blue.withAlphaComponent(0.9)
+            renderer.lineWidth = 7
+            return renderer
+        }
+
+        return MKOverlayRenderer()
     }
 }

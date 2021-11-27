@@ -37,10 +37,13 @@ class RunningViewController: UIViewController, View {
     private let progressView2 = ProgressView().then {
         $0.progressLabel.text = "player 2"
     }
+    private let progressView3 = ProgressView().then {
+        $0.progressLabel.text = "player 3"
+    }
 
     private let giveupButton = UIButton().then {
         $0.setTitle("Give up", for: .normal)
-        $0.backgroundColor = .gray
+        $0.backgroundColor = .primary
         $0.roundCorner(7)
     }
 
@@ -66,6 +69,7 @@ class RunningViewController: UIViewController, View {
         progressStackView.addArrangedSubview(progressView)
         progressStackView.addArrangedSubview(progressView1)
         progressStackView.addArrangedSubview(progressView2)
+        progressStackView.addArrangedSubview(progressView3)
 
         progressStackView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
@@ -111,6 +115,15 @@ class RunningViewController: UIViewController, View {
 
     func bind(reactor: RunningViewReactor) {
         reactor.action.onNext(.start)
+        switch reactor.match.users.count {
+        case 3:
+            progressView3.isHidden = true
+        case 2:
+            progressView3.isHidden = true
+            progressView2.isHidden = true
+        default:
+            break
+        }
 
         giveupButton.rx.tap
             .subscribe(onNext: { [weak self] _ in
@@ -146,13 +159,17 @@ class RunningViewController: UIViewController, View {
 
                 self?.progressView1.setProgress(Double(time) / 200.0)
                 self?.progressView2.setProgress(Double(time) / 170.0)
+
+                if Bool.random() && Bool.random() && Bool.random(), let event = MatchEvent.allCases.randomElement() {
+                    reactor.notification(for: event)
+                }
             })
             .disposed(by: disposeBag)
 
         reactor.state.map(\.distance)
             .subscribe(onNext: { [weak self] distance in
-                let progress = distance / 1000.0
-                self?.progressView.setProgress(distance / 1000.0)
+                let progress = distance / Double(reactor.distance)
+                self?.progressView.setProgress(distance / Double(reactor.distance))
                 if progress > 1 {
                     reactor.action.onNext(.finish)
                 }

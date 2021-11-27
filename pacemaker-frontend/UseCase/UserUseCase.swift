@@ -10,19 +10,40 @@ import RxSwift
 
 protocol UserUseCase {
     func signin(email: String, password: String) -> Single<User>
-    func signup(email: String, password: String) -> Single<User>
+    func signup(email: String, password: String, nickname: String) -> Single<SignupResponse>
 }
 
 final class DefaultUserUseCase: UserUseCase {
+    static let shared = DefaultUserUseCase()
+    private let sessionManager: SessionManager = DefaultSessionManager.shared
+    private let requestManager: RequestManager = DefaultRequestManager.shared
+
     func signin(email: String, password: String) -> Single<User> {
-        .just(User(email: "mockdata@mock.com"))
+//        return .just(User(id: 1, email: "", nickname: ""))
+
+        return requestManager.post(
+            "/api/v1/users/signin",
+            parameters: [
+                "email": email,
+                "password": password
+            ],
+            responseType: SignupResponse.self
+        ).map { [sessionManager] response in
+            sessionManager.user = response.user
+            sessionManager.token = response.token
+            return response.user
+        }
     }
     
-    func signup(email: String, password: String) -> Single<User> {
-        // TODO: 1. check if valid email, 2. register user
-        guard true else {
-            // TODO: register fail
-        }
-        return .just(User(email: "mockdata@mock.com"))
+    func signup(email: String, password: String, nickname: String) -> Single<SignupResponse> {
+        return requestManager.post(
+            "/api/v1/users/signup",
+            parameters: [
+                "email": email,
+                "password": password,
+                "nickname": nickname
+            ],
+            responseType: SignupResponse.self
+        )
     }
 }

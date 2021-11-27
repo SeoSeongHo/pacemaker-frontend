@@ -114,7 +114,7 @@ class RunningMapViewController: UIViewController, View {
         reactor.state.map(\.distance)
             .distinctUntilChanged()
             .subscribe(onNext: { [distanceLabel] distance in
-                distanceLabel.textField.text = "\(Int(distance))/1000m"
+                distanceLabel.textField.text = "\(Int(distance))/\(reactor.distance)"
             })
             .disposed(by: disposeBag)
 

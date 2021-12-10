@@ -43,7 +43,6 @@ class HistoryDetailViewController: UIViewController {
         $0.noDataText = "데이터가 없습니다."
         $0.noDataFont = .systemFont(ofSize: 20)
         $0.noDataTextColor = .lightGray
-        $0.doubleTapToZoomEnabled = false
         $0.xAxis.labelPosition = .bottom
         $0.rightAxis.enabled = false
     }
@@ -112,7 +111,6 @@ class HistoryDetailViewController: UIViewController {
         chartDataSet.colors = [.primary]
         chartDataSet.lineWidth = 3
         let chartData = LineChartData(dataSet: chartDataSet)
-        chartDataSet.highlightEnabled = false
         chartView.data = chartData
     }
 }

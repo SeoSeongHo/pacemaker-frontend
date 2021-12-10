@@ -11,7 +11,7 @@ import RxSwift
 protocol MatchUseCase {
     func start(distance: Int, memberCount: Int) -> Single<Match>
     func cancel(distance: Int, memberCount: Int) -> Single<Match>
-    func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double) -> Single<MatchResponse>
+    func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double, count: Int) -> Single<MatchResponse>
 }
 
 final class DefaultMatchUseCase: MatchUseCase {
@@ -41,10 +41,15 @@ final class DefaultMatchUseCase: MatchUseCase {
         )
     }
 
-    func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double) -> Single<MatchResponse> {
+    func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double, count: Int) -> Single<MatchResponse> {
         return requestManager.post(
             "/api/v1/matches/poll",
-            parameters: ["userMatchId": userMatchId, "distance": distance, "currentSpeed": currentSpeed],
+            parameters: [
+                "userMatchId": userMatchId,
+                "currentDistance": distance,
+                "currentSpeed": currentSpeed,
+                "count": count
+            ],
             responseType: MatchResponse.self
         )
     }

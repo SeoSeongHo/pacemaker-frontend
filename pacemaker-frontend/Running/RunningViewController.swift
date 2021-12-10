@@ -184,16 +184,16 @@ class RunningViewController: UIViewController, View {
                     switch index {
                     case 0:
                         let progress = user.currentDistance / Double(reactor.distance)
-                        self?.progressView.setProgress(progress)
+                        self?.progressView.setProgress(progress, speed: user.currentSpeed)
                     case 1:
                         let progress = user.currentDistance / Double(reactor.distance)
-                        self?.progressView1.setProgress(progress)
+                        self?.progressView1.setProgress(progress, speed: user.currentSpeed)
                     case 2:
                         let progress = user.currentDistance / Double(reactor.distance)
-                        self?.progressView2.setProgress(progress)
+                        self?.progressView2.setProgress(progress, speed: user.currentSpeed)
                     case 3:
                         let progress = user.currentDistance / Double(reactor.distance)
-                        self?.progressView3.setProgress(progress)
+                        self?.progressView3.setProgress(progress, speed: user.currentSpeed)
                     default:
                         break
                     }
@@ -202,15 +202,53 @@ class RunningViewController: UIViewController, View {
             .disposed(by: disposeBag)
 
         reactor.donePublisher
-            .subscribe(onNext: { [weak self] in
+            .subscribe(onNext: { [weak self] history in
                 guard let self = self else { return }
                 let vc = self.presentingViewController
-                self.dismiss(animated: true, completion: { [weak vc]  in
-//                    let result = HistoryDetailViewController(history: History(time: Date(), distances: [1000], rank: 1))
-//                    vc?.present(result, animated: true)
+                self.dismiss(animated: true, completion: { [weak vc] in
+                    let result = HistoryDetailViewController(history: history)
+                    vc?.present(result, animated: true)
                 })
             })
             .disposed(by: disposeBag)
+
+
+        typealias Scanned = (Int, Int)
+        let first: Scanned = (0, 0)
+        reactor.state.map(\.myPlace)
+            .skip(.seconds(5), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .scan(first) { (last, new) in
+                return (last.1, new)
+            }
+            .subscribe(onNext: { (prev, next) in
+                if next == 1 {
+                    reactor.notification(for: .FIRST_PLACE)
+                } else if prev > next {
+                    reactor.notification(for: .OVERTAKEN)
+                } else if prev < next {
+                    reactor.notification(for: .OVERTAKING)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map(\.finishedUser.count)
+            .distinctUntilChanged()
+            .subscribe(onNext: { count in
+                if count > 0 {
+                    reactor.notification(for: .FINISH_OTHER)
+                }
+            })
+            .disposed(by: disposeBag)
+
+        reactor.state.map(\.isFinished)
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { _ in
+                reactor.notification(for: .FINISH)
+            })
+            .disposed(by: disposeBag)
+
     }
 }
 
@@ -232,6 +270,10 @@ class ProgressView: UIView {
         $0.font = .systemFont(ofSize: 20, weight: .bold)
     }
 
+    let speedLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12, weight: .bold)
+    }
+
     private let progressIndicator = UIImageView().then {
         $0.image = UIImage(systemName: "figure.walk")
         $0.tintColor = .black
@@ -243,6 +285,7 @@ class ProgressView: UIView {
         addSubview(progressView)
         addSubview(progressLabel)
         addSubview(progressIndicatorView)
+        addSubview(speedLabel)
         progressIndicatorView.addSubview(progressIndicator)
 
         progressLabel.snp.makeConstraints { make in
@@ -266,19 +309,27 @@ class ProgressView: UIView {
         progressIndicator.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(5)
         }
+
+        speedLabel.snp.makeConstraints { make in
+            make.centerX.equalTo(progressIndicatorView)
+            make.top.equalTo(progressIndicatorView.snp.bottom).offset(5)
+        }
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func setProgress(_ progress: Double) {
+    func setProgress(_ progress: Double, speed: Double) {
         let progress = min(progress, 1)
         let inset = (bounds.width - 20) * progress
 
         progressIndicatorView.snp.updateConstraints { make in
             make.left.equalToSuperview().inset(inset)
         }
+
+        speedLabel.text = "\(speed)m/s"
+
         layoutIfNeeded()
     }
 }

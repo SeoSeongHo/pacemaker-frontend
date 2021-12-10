@@ -94,12 +94,11 @@ final class MatchViewReactor: Reactor {
             .flatMap { [weak self] match -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 if match.status == .MATCHING_COMPLETE {
-                    print("$$$", Date(), match.startDatetime)
                     self.matchPublisher.accept(match)
                     return .just(.setStatus(.ready))
                 } else if match.status == .MATCHING, self.currentState.status == .finding {
                     return Observable<Void>.just(())
-                        .delay(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                        .delay(.seconds(3), scheduler: MainScheduler.asyncInstance)
                         .flatMap { [weak self] _ -> Observable<Mutation> in
                             guard let self = self else { return .empty() }
                             return self.pollMatch()

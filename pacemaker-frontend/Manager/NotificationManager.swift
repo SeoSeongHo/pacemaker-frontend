@@ -68,7 +68,7 @@ final class DefaultNotificationManager: NotificationManager {
     func finishOther() {
         makeNotification(
             title: "누군가가 레이스를 완료했어요",
-            sound: "finiah_other.mp3"
+            sound: "finish_other.mp3"
         )
     }
 

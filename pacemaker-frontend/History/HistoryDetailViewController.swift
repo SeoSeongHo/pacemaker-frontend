@@ -14,8 +14,30 @@ class HistoryDetailViewController: UIViewController {
     private let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: nil, action: nil).then {
         $0.tintColor = .black
     }
-    
-    private let resultLabel = UILabel()
+
+    private let stackView = UIStackView().then {
+        $0.axis = .vertical
+        $0.spacing = 10
+        $0.alignment = .fill
+    }
+
+    private let distanceLabel = InputField().then {
+        $0.titleLabel.text = "Distance"
+        $0.textField.text = ""
+        $0.textField.isUserInteractionEnabled = false
+    }
+
+    private let rankLabel = InputField().then {
+        $0.titleLabel.text = "Rank"
+        $0.textField.text = ""
+        $0.textField.isUserInteractionEnabled = false
+    }
+
+    private let timeLabel = InputField().then {
+        $0.titleLabel.text = "Time"
+        $0.textField.text = ""
+        $0.textField.isUserInteractionEnabled = false
+    }
     
     var disposeBag = DisposeBag()
     
@@ -24,15 +46,18 @@ class HistoryDetailViewController: UIViewController {
         navigationItem.title = "Result"
         view.backgroundColor = .white
         
-        view.addSubview(resultLabel)
-        
-        resultLabel.snp.makeConstraints {make in
+        view.addSubview(stackView)
+        stackView.addArrangedSubview(distanceLabel)
+        stackView.addArrangedSubview(rankLabel)
+        stackView.addArrangedSubview(timeLabel)
+
+        stackView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(24)
             make.top.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
     }
     
-    init(history : MockHistory) {
+    init(history : History) {
         super.init(nibName: nil, bundle: nil)
         
         configure()
@@ -54,13 +79,9 @@ class HistoryDetailViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setValue(history: MockHistory) {
-        var formatter_time = DateFormatter()
-        formatter_time.dateFormat = "HH:mm"
-        var current_time_string = formatter_time.string(from: history.time)
-        
-        resultLabel.text = "Distance: " + String(format: "%.1f", history.distances) + "m" + "\nTime: " + current_time_string + "\nRank: " + String(format: "%i", history.rank)
-        resultLabel.numberOfLines = 3
-        resultLabel.font = .systemFont(ofSize: 20, weight: .bold)
+    private func setValue(history: History) {
+        distanceLabel.textField.text = "\(history.totalDistance)m"
+        timeLabel.textField.text = "\(history.totalTime)min"
+        rankLabel.textField.text = "\(history.rank) / \(history.totalMembers)"
     }
 }

@@ -11,11 +11,17 @@ import RxDataSources
 
 final class HistoryCell: UITableViewCell {
     static let reuseIdentifier = "HistoryCell"
-    
-    private let titleLabel = UILabel()
+
+    private let rankLabel = UILabel().then {
+        $0.textColor = .primary
+        $0.font = .systemFont(ofSize: 15)
+    }
+    private let titleLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 15)
+    }
     private let leftArrow = UIImageView().then {
         $0.image = UIImage(systemName: "chevron.right")
-        $0.tintColor = .black
+        $0.tintColor = .primary
     }
     
     var disposeBag = DisposeBag()
@@ -34,27 +40,33 @@ final class HistoryCell: UITableViewCell {
     
     private func configure() {
         contentView.addSubview(titleLabel)
+        contentView.addSubview(rankLabel)
         contentView.addSubview(leftArrow)
         
         titleLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.height.equalTo(69)
+            make.centerY.equalToSuperview()
+            make.top.bottom.equalToSuperview().inset(24)
+            make.left.equalToSuperview().inset(24)
+        }
+
+        rankLabel.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.right.equalTo(leftArrow.snp.left).offset(-10)
         }
         
         leftArrow.snp.makeConstraints { make in
-            make.right.equalToSuperview().inset(10)
+            make.right.equalToSuperview().inset(24)
             make.centerY.equalToSuperview()
         }
     }
     
-    func setValue(history: MockHistory) {
-        var formatter_time = DateFormatter()
-        formatter_time.dateFormat = "HH:mm"
-        var current_time_string = formatter_time.string(from: history.time)
-        
-        titleLabel.numberOfLines = 3
-        titleLabel.text = "Distance: " + String(format: "%.1f", history.distances) + "m" + "\nTime: " + current_time_string + "\nRank: " + String(format: "%i", history.rank)
-        titleLabel.font = .systemFont(ofSize: 15, weight: .bold)
+    func setValue(history: History) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "YYYY.MM.dd HH:mm"
+        let timeString = formatter.string(from: history.matchStartDatetime)
+
+        titleLabel.text = timeString
+        rankLabel.text = "\(history.rank) / \(history.totalMembers)"
     }
 }
 
@@ -62,4 +74,16 @@ struct MockHistory {
     var time: Date
     var distances: [Double]
     var rank: Int
+}
+
+struct History: Codable {
+    let id: Int64
+    let totalDistance: Int
+    let matchStartDatetime: Date
+    let matchEndDatetime: Date
+    let totalTime: Int
+    let rank: Int
+    let totalMembers: Int
+    let maximumSpeed: Int
+    let graph: [Int]
 }

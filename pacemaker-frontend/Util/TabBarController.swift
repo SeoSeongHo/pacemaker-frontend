@@ -15,8 +15,8 @@ class TabBarController: UITabBarController, UITabBarControllerDelegate {
         self.delegate = self
         
         let appearance = UITabBarAppearance()
-        appearance.stackedLayoutAppearance.selected.iconColor = .black
-        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+        appearance.stackedLayoutAppearance.selected.iconColor = .primary
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.primary]
 
         self.tabBar.standardAppearance = appearance
     }

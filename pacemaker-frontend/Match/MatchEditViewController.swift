@@ -43,26 +43,20 @@ class MatchEditViewController: UIViewController, View {
     private let backButton = UIBarButtonItem(image: UIImage(systemName: "xmark"), style: .plain, target: nil, action: nil).then {
         $0.tintColor = .black
     }
-
-    private let descriptionLabel = UILabel().then {
-        $0.text = "Please select the distance you will run and the number of people.\nAfter a match with anonymous people, it cannot be changed."
-        $0.numberOfLines = 0
-        $0.font = .systemFont(ofSize: 15, weight: .regular)
-    }
     
     private let distanceLabel = UILabel().then {
         $0.text = "Distance"
         $0.font = .systemFont(ofSize: 15, weight: .bold)
     }
     
-    private let distanceSegementedControl = UISegmentedControl(items: Distance.allCases.map { $0.rawValue })
+    private let distanceSegementedControl = UISegmentedControl(items: Distance.allCases.map { $0.title })
     
     private let runnerLabel = UILabel().then {
         $0.text = "Number of runners"
         $0.font = .systemFont(ofSize: 15, weight: .bold)
     }
     
-    private let runnerSegementedControl = UISegmentedControl(items: Runner.allCases.map { $0.rawValue })
+    private let runnerSegementedControl = UISegmentedControl(items: Runner.allCases.map { $0.title })
     
     private let confirmButton = UIButton().then {
         $0.setTitle("Confirm", for: .normal)
@@ -94,8 +88,7 @@ class MatchEditViewController: UIViewController, View {
         navigationItem.leftBarButtonItem = backButton
         navigationItem.title = "Running Environments"
         view.backgroundColor = .white
-        
-        view.addSubview(descriptionLabel)
+
         view.addSubview(middleStackView)
         view.addSubview(confirmButton)
         
@@ -108,14 +101,8 @@ class MatchEditViewController: UIViewController, View {
         middleStackView.addArrangedSubview(distanceStackView)
         middleStackView.addArrangedSubview(runnerStackView)
         
-        descriptionLabel.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(24)
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(24)
-        }
-        
         middleStackView.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(24)
-            make.bottom.equalTo(confirmButton.snp.top).offset(-50)
+            make.top.left.right.equalTo(view.safeAreaLayoutGuide).inset(24)
         }
         
         confirmButton.snp.makeConstraints { make in

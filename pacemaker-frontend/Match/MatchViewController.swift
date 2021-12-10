@@ -53,6 +53,7 @@ class MatchViewController: UIViewController, View {
 
     private let findingTitleLabel = UILabel().then {
         $0.text = "Finding\nPacemakers..."
+        $0.textColor = .primary
         $0.numberOfLines = 2
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 40, weight: .bold)
@@ -103,7 +104,7 @@ class MatchViewController: UIViewController, View {
         
         editButton.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(24)
-            make.bottom.equalToSuperview().inset(75)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
             make.height.equalTo(46)
         }
         
@@ -124,7 +125,7 @@ class MatchViewController: UIViewController, View {
         
         cancelButton.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(24)
-            make.bottom.equalToSuperview().inset(75)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(24)
             make.height.equalTo(46)
         }
     }

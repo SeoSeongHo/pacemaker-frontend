@@ -14,6 +14,7 @@ final class RunningViewReactor: Reactor {
         var locations: [CLLocation] = []
         var distance: CLLocationDistance = 0
         var speed: CLLocationSpeed = 0
+        var matchUser: [MatchUser]
     }
 
     enum Action {
@@ -23,11 +24,14 @@ final class RunningViewReactor: Reactor {
 
     enum Mutation {
         case setLocation(CLLocation?)
+        case setMatchUser([MatchUser])
     }
 
+    let donePublisher = PublishSubject<Void>()
     let initialState: State
     private let locationManager: LocationManager
     private let notificationManager: NotificationManager
+    private let matchUseCase: MatchUseCase
     let match: Match
     let distance: Int
 
@@ -35,13 +39,15 @@ final class RunningViewReactor: Reactor {
         distance: Int,
         match: Match,
         locationManager: LocationManager = DefaultLocationManager.shared,
-        notificationManager: NotificationManager = DefaultNotificationManager()
+        notificationManager: NotificationManager = DefaultNotificationManager(),
+        matchUseCase: MatchUseCase = DefaultMatchUseCase()
     ) {
         self.distance = distance
         self.match = match
-        self.initialState = State()
+        self.initialState = State(matchUser: match.users)
         self.locationManager = locationManager
         self.notificationManager = notificationManager
+        self.matchUseCase = matchUseCase
     }
 
     func mutate(action: Action) -> Observable<Mutation> {
@@ -49,9 +55,12 @@ final class RunningViewReactor: Reactor {
         case .start:
             notificationManager.start()
             locationManager.start()
-            return locationManager.currentLocation
-                .skip(.seconds(1), scheduler: MainScheduler.asyncInstance)
-                .map { .setLocation($0) }
+            return .merge(
+                locationManager.currentLocation
+                    .skip(.seconds(1), scheduler: MainScheduler.asyncInstance)
+                    .map { .setLocation($0) },
+                pollMatch()
+            )
         case .finish:
             notificationManager.finish()
             locationManager.stop()
@@ -70,6 +79,8 @@ final class RunningViewReactor: Reactor {
                 }
                 newState.locations.append(location)
             }
+        case .setMatchUser(let users):
+            newState.matchUser = users
         }
         return newState
     }
@@ -92,7 +103,37 @@ final class RunningViewReactor: Reactor {
             notificationManager.done()
         case .FIRST_PLACE:
             notificationManager.firstPlace()
+        case .NONE:
+            break
         }
+    }
+
+    func pollMatch() -> Observable<Mutation> {
+        return matchUseCase.sendMatchInfo(
+            userMatchId: match.users.first?.userMatchId ?? -1,
+            distance: currentState.distance,
+            currentSpeed: currentState.speed
+        )
+            .asObservable()
+            .flatMap { [weak self] match -> Observable<Mutation> in
+                guard let self = self else { return .empty() }
+                if let event = match.alarmCategory {
+                    self.notification(for: event)
+                    if event == .DONE {
+                        self.donePublisher.onNext(())
+                        self.locationManager.stop()
+                        return .just(.setMatchUser(match.matchUsers))
+                    }
+                }
+                return .concat(
+                    .just(.setMatchUser(match.matchUsers)),
+                    self.pollMatch()
+                )
+            }
+    }
+
+    deinit {
+        locationManager.stop()
     }
 }
 

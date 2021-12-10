@@ -13,7 +13,20 @@ struct User: Codable {
     let nickname: String
 }
 
+struct MatchUser: Codable {
+    let id: Int64
+    let userMatchId: Int64
+    let nickname: String
+    let currentDistance: Double
+    let currentSpeed: Double
+}
+
 struct SignupResponse: Codable {
     let token: String
     let user: User
+}
+
+struct MatchResponse: Codable {
+    let matchUsers: [MatchUser]
+    let alarmCategory: MatchEvent?
 }

@@ -54,7 +54,14 @@ final class MatchViewReactor: Reactor {
                 pollMatch()
             )
         case .cancel:
-            return .just(.setStatus(.idle))
+            return .concat(
+                .just(.setStatus(.idle)),
+                matchUseCase.cancel(
+                    distance: currentState.distance.rawValue,
+                    memberCount: currentState.runner.rawValue
+                ).asObservable().flatMap { _ in Observable<Mutation>.empty() }
+            )
+
         case .start:
             return .just(.setStatus(.idle))
 
@@ -86,11 +93,11 @@ final class MatchViewReactor: Reactor {
             .asObservable()
             .flatMap { [weak self] match -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
-                if match.status == .DONE {
+                if match.status == .MATCHING_COMPLETE {
+                    print("$$$", Date(), match.startDatetime)
                     self.matchPublisher.accept(match)
                     return .just(.setStatus(.ready))
-                } else {
-                    guard self.currentState.status == .finding else { return .empty() }
+                } else if match.status == .MATCHING, self.currentState.status == .finding {
                     return Observable<Void>.just(())
                         .delay(.seconds(1), scheduler: MainScheduler.asyncInstance)
                         .flatMap { [weak self] _ -> Observable<Mutation> in
@@ -98,6 +105,7 @@ final class MatchViewReactor: Reactor {
                             return self.pollMatch()
                         }
                 }
+                return .just(.setStatus(.idle))
             }
             .catch {
                 Toaster.shared.showToast(.error($0.localizedDescription))

@@ -3,6 +3,9 @@ PODS:
   - AlamofireNetworkActivityLogger (3.4.0):
     - Alamofire (~> 5.4.0)
   - AlignedCollectionViewFlowLayout (1.1.2)
+  - Charts (3.6.0):
+    - Charts/Core (= 3.6.0)
+  - Charts/Core (3.6.0)
   - Differentiator (5.0.0)
   - KakaoSDKAuth (2.4.1):
     - KakaoSDKCommon (= 2.4.1)
@@ -41,6 +44,7 @@ DEPENDENCIES:
   - Alamofire (~> 5.1)
   - AlamofireNetworkActivityLogger (~> 3.4)
   - AlignedCollectionViewFlowLayout
+  - Charts
   - KakaoSDKAuth
   - KeychainAccess (~> 4.2.1)
   - Kingfisher
@@ -59,6 +63,7 @@ SPEC REPOS:
     - Alamofire
     - AlamofireNetworkActivityLogger
     - AlignedCollectionViewFlowLayout
+    - Charts
     - Differentiator
     - KakaoSDKAuth
     - KakaoSDKCommon
@@ -80,6 +85,7 @@ SPEC CHECKSUMS:
   Alamofire: 2291f7d21ca607c491dd17642e5d40fdcda0e65c
   AlamofireNetworkActivityLogger: 162ab8aee00e6267a4304d7cc134e13ccfe3bcc5
   AlignedCollectionViewFlowLayout: ee2ef451e741ec08f8e0967d828001e2f051c20a
+  Charts: b1e3a1f5a1c9ba5394438ca3b91bd8c9076310af
   Differentiator: e8497ceab83c1b10ca233716d547b9af21b9344d
   KakaoSDKAuth: fcba1c9ede431683f5bdd84c835a96981cb115a5
   KakaoSDKCommon: 0912aa0c7db051ae8dc07a35395cf644f7728f95
@@ -97,6 +103,6 @@ SPEC CHECKSUMS:
   "UITextView+Placeholder": d7b0c400921f66523f3a85d74f774512e14f6502
   WeakMapTable: 05c694ce8439a7a9ebabb56187287a63c57673d6
 
-PODFILE CHECKSUM: 3ce225844dbb5b3a7a523ee9bcf8cf80fd9413ae
+PODFILE CHECKSUM: 5bc0f2f0056a2fd4ea54a6e01011d5bd1ddbc928
 
 COCOAPODS: 1.9.3

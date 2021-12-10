@@ -84,6 +84,6 @@ struct History: Codable {
     let totalTime: Int
     let rank: Int
     let totalMembers: Int
-    let maximumSpeed: Int
-    let graph: [Int]
+    let maximumSpeed: Double
+    let graph: [Double]
 }

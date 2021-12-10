@@ -8,7 +8,7 @@
 import UIKit
 import ReactorKit
 import RxSwift
-import SwiftUI
+import Charts
 
 class HistoryDetailViewController: UIViewController {
     private let backButton = UIBarButtonItem(image: UIImage(systemName: "chevron.left"), style: .plain, target: nil, action: nil).then {
@@ -38,6 +38,15 @@ class HistoryDetailViewController: UIViewController {
         $0.textField.text = ""
         $0.textField.isUserInteractionEnabled = false
     }
+
+    private let chartView = LineChartView().then {
+        $0.noDataText = "데이터가 없습니다."
+        $0.noDataFont = .systemFont(ofSize: 20)
+        $0.noDataTextColor = .lightGray
+        $0.doubleTapToZoomEnabled = false
+        $0.xAxis.labelPosition = .bottom
+        $0.rightAxis.enabled = false
+    }
     
     var disposeBag = DisposeBag()
     
@@ -50,10 +59,17 @@ class HistoryDetailViewController: UIViewController {
         stackView.addArrangedSubview(distanceLabel)
         stackView.addArrangedSubview(rankLabel)
         stackView.addArrangedSubview(timeLabel)
+        view.addSubview(chartView)
 
         stackView.snp.makeConstraints { make in
             make.left.right.equalToSuperview().inset(24)
             make.top.equalTo(view.safeAreaLayoutGuide).inset(24)
+        }
+
+        chartView.snp.makeConstraints { make in
+            make.left.right.equalTo(view.safeAreaLayoutGuide).inset(24)
+            make.top.equalTo(stackView.snp.bottom).offset(24)
+            make.height.equalTo(250)
         }
     }
     
@@ -83,5 +99,20 @@ class HistoryDetailViewController: UIViewController {
         distanceLabel.textField.text = "\(history.totalDistance)m"
         timeLabel.textField.text = "\(history.totalTime)min"
         rankLabel.textField.text = "\(history.rank) / \(history.totalMembers)"
+
+        var dataEntries: [BarChartDataEntry] = []
+        for i in 0..<history.graph.count {
+            let dataEntry = BarChartDataEntry(x: Double(i), y: history.graph[i])
+            dataEntries.append(dataEntry)
+        }
+
+        let chartDataSet = LineChartDataSet(entries: dataEntries, label: "Speeds per second")
+        chartDataSet.drawCirclesEnabled = false
+        chartDataSet.drawValuesEnabled = false
+        chartDataSet.colors = [.primary]
+        chartDataSet.lineWidth = 3
+        let chartData = LineChartData(dataSet: chartDataSet)
+        chartDataSet.highlightEnabled = false
+        chartView.data = chartData
     }
 }

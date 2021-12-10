@@ -115,6 +115,25 @@ class RunningViewController: UIViewController, View {
 
     func bind(reactor: RunningViewReactor) {
         reactor.action.onNext(.start)
+        if reactor.match.users.count > 0 {
+            progressView.progressLabel.textColor = .primary
+            progressView.progressView.backgroundColor = .primary
+            progressView.id = reactor.match.users[0].id
+            progressView.progressLabel.text = reactor.match.users[0].nickname
+        }
+        if reactor.match.users.count > 1 {
+            progressView1.id = reactor.match.users[1].id
+            progressView1.progressLabel.text = reactor.match.users[1].nickname
+        }
+        if reactor.match.users.count > 2 {
+            progressView2.id = reactor.match.users[2].id
+            progressView2.progressLabel.text = reactor.match.users[2].nickname
+        }
+        if reactor.match.users.count > 3 {
+            progressView3.id = reactor.match.users[3].id
+            progressView3.progressLabel.text = reactor.match.users[3].nickname
+        }
+
         switch reactor.match.users.count {
         case 3:
             progressView3.isHidden = true
@@ -156,30 +175,49 @@ class RunningViewController: UIViewController, View {
                 let minute = time / 60
                 let second = time % 60
                 self?.runningTimeLabel.text = "\(minute < 10 ? "0\(minute)" : "\(minute)"):\(second < 10 ? "0\(second)" : "\(second)")"
+            })
+            .disposed(by: disposeBag)
 
-                self?.progressView1.setProgress(Double(time) / 200.0)
-                self?.progressView2.setProgress(Double(time) / 170.0)
-
-                if Bool.random() && Bool.random() && Bool.random(), let event = MatchEvent.allCases.randomElement() {
-                    reactor.notification(for: event)
+        reactor.state.map(\.matchUser)
+            .subscribe(onNext: { [weak self] matchUser in
+                matchUser.enumerated().forEach { index, user in
+                    switch index {
+                    case 0:
+                        let progress = user.currentDistance / Double(reactor.distance)
+                        self?.progressView.setProgress(progress)
+                    case 1:
+                        let progress = user.currentDistance / Double(reactor.distance)
+                        self?.progressView1.setProgress(progress)
+                    case 2:
+                        let progress = user.currentDistance / Double(reactor.distance)
+                        self?.progressView2.setProgress(progress)
+                    case 3:
+                        let progress = user.currentDistance / Double(reactor.distance)
+                        self?.progressView3.setProgress(progress)
+                    default:
+                        break
+                    }
                 }
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map(\.distance)
-            .subscribe(onNext: { [weak self] distance in
-                let progress = distance / Double(reactor.distance)
-                self?.progressView.setProgress(distance / Double(reactor.distance))
-                if progress > 1 {
-                    reactor.action.onNext(.finish)
-                }
+        reactor.donePublisher
+            .subscribe(onNext: { [weak self] in
+                guard let self = self else { return }
+                let vc = self.presentingViewController
+                self.dismiss(animated: true, completion: { [weak vc]  in
+//                    let result = HistoryDetailViewController(history: History(time: Date(), distances: [1000], rank: 1))
+//                    vc?.present(result, animated: true)
+                })
             })
             .disposed(by: disposeBag)
     }
 }
 
 class ProgressView: UIView {
-    private let progressView = UIView().then {
+    var id: Int64?
+
+    let progressView = UIView().then {
         $0.roundCorner(2)
         $0.backgroundColor = .lightGray
     }

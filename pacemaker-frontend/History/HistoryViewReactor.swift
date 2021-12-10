@@ -10,7 +10,7 @@ import RxSwift
 
 final class HistoryViewReactor: Reactor {
     struct State {
-        var histories: [MockHistory]
+        var histories: [History]
     }
 
     enum Action {
@@ -18,7 +18,7 @@ final class HistoryViewReactor: Reactor {
     }
 
     enum Mutation {
-        case setHistories([MockHistory])
+        case setHistories([History])
     }
 
     let initialState: State

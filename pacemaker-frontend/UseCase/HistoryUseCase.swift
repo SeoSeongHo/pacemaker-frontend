@@ -9,30 +9,16 @@ import Foundation
 import RxSwift
 
 protocol HistoryUseCase {
-    func fetchHistries() -> Single<[MockHistory]>
+    func fetchHistries() -> Single<[History]>
 }
 
 final class DefaultHistoryUseCase: HistoryUseCase {
-    func fetchHistries() -> Single<[MockHistory]> {
-        .just([
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3),
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3),
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3),
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3),
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3),
-            MockHistory(time: Date(), distances: [1], rank: 1),
-            MockHistory(time: Date(), distances: [1], rank: 2),
-            MockHistory(time: Date(), distances: [1], rank: 3)
-        ])
+    private let requestManager = DefaultRequestManager.shared
+    func fetchHistries() -> Single<[History]> {
+        requestManager.get("/api/v1/users/userHistory", responseType: [History].self)
+    }
+
+    func getHistory(userMatchId: Int64) -> Single<History> {
+        requestManager.get("/api/v1/users/userHistory/\(userMatchId)", responseType: History.self)
     }
 }

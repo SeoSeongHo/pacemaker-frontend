@@ -23,7 +23,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         toastWindow = ToastWindow(windowScene: windowScene)
         window.backgroundColor = .white
         self.window = window
-        window.rootViewController = LoginViewController(reactor: LoginViewReactor())
+        if DefaultSessionManager.shared.token == nil {
+            window.rootViewController = LoginViewController(reactor: LoginViewReactor())
+        } else {
+            window.rootViewController = TabBarController()
+        }
         window.makeKeyAndVisible()
     }
 

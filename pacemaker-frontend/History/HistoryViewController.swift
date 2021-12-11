@@ -87,6 +87,7 @@ class HistoryViewController: UIViewController, View {
         logoutButton.rx.tap
             .subscribe(onNext: { _ in
                 let viewController = LoginViewController(reactor: LoginViewReactor())
+                DefaultSessionManager.shared.token = nil
                 UIApplication.shared.keyWindow?.rootViewController = viewController
             })
             .disposed(by: disposeBag)

@@ -12,6 +12,7 @@ protocol MatchUseCase {
     func start(distance: Int, memberCount: Int) -> Single<Match>
     func cancel(distance: Int, memberCount: Int) -> Single<Match>
     func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double, count: Int) -> Single<MatchResponse>
+    func giveup(userMatchId: Int64) -> Single<Void>
 
     var matchPollingInterval: Int { get }
 }
@@ -43,6 +44,11 @@ final class DefaultMatchUseCase: MatchUseCase {
             parameters: ["distance": distance, "participants": memberCount],
             responseType: Match.self
         )
+    }
+    
+    func giveup(userMatchId: Int64) -> Single<Void> {
+        requestManager.post("/api/v1/matches/cancel/\(userMatchId)", responseType: EmptyResponse.self)
+            .map { _ in Void() }
     }
 
     func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double, count: Int) -> Single<MatchResponse> {
@@ -83,4 +89,10 @@ enum MatchEvent: String, CaseIterable, Codable {
     case FINISH_OTHER
     case DONE
     case FIRST_PLACE
+    case SPEED_UP
+    case SPEED_DOWN
+}
+
+struct EmptyResponse: Codable {
+    
 }

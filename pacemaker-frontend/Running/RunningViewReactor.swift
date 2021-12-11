@@ -18,11 +18,13 @@ final class RunningViewReactor: Reactor {
         var finishedUser: [MatchUser] = []
         var isFinished = false
         var myPlace: Int = 1
+        var meanSpeed: Double = 0
     }
 
     enum Action {
         case start
         case finish
+        case giveup
     }
 
     enum Mutation {
@@ -72,6 +74,10 @@ final class RunningViewReactor: Reactor {
             notificationManager.finish()
             locationManager.stop()
             return .empty()
+        case .giveup:
+            return matchUseCase.giveup(userMatchId: match.users[0].userMatchId)
+                .asObservable()
+                .flatMap { _ in Observable<Mutation>.empty() }
         }
     }
 
@@ -83,6 +89,9 @@ final class RunningViewReactor: Reactor {
                 newState.speed = location.speed
                 if let prevLocation = newState.locations.last {
                     newState.distance += location.distance(from: prevLocation)
+                }
+                if newState.locations.count != 0 {
+                    newState.meanSpeed = (newState.meanSpeed * Double(newState.locations.count) + newState.speed) / (Double(newState.locations.count) + 1)
                 }
                 newState.locations.append(location)
             }
@@ -122,6 +131,10 @@ final class RunningViewReactor: Reactor {
             notificationManager.done()
         case .FIRST_PLACE:
             notificationManager.firstPlace()
+        case .SPEED_UP:
+            notificationManager.speedUp()
+        case .SPEED_DOWN:
+            notificationManager.speedDown()
         case .NONE:
             break
         }

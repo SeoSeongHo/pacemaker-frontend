@@ -149,6 +149,7 @@ class RunningViewController: UIViewController, View {
                 let actions = [
                     AlertAction(title: "cancel", style: .destructive),
                     AlertAction(title: "give up", style: .normal) { _ in
+                        reactor.action.onNext(.giveup)
                         self?.dismiss(animated: true, completion: nil)
                     },
                 ]
@@ -241,11 +242,17 @@ class RunningViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
 
-        reactor.state.map(\.isFinished)
-            .distinctUntilChanged()
-            .filter { $0 }
-            .subscribe(onNext: { _ in
-                reactor.notification(for: .FINISH)
+        Observable.combineLatest(
+            reactor.state.map(\.meanSpeed).distinctUntilChanged(),
+            reactor.state.map(\.speed).distinctUntilChanged()
+        )
+            .subscribe(onNext: { mean, current in
+                if current < mean * 0.5 {
+                    reactor.notification(for: .SPEED_UP)
+                }
+                else if current > mean * 1.5 {
+                    reactor.notification(for: .SPEED_DOWN)
+                }
             })
             .disposed(by: disposeBag)
 

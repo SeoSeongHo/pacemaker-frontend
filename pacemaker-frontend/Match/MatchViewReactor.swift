@@ -61,7 +61,6 @@ final class MatchViewReactor: Reactor {
                     memberCount: currentState.runner.rawValue
                 ).asObservable().flatMap { _ in Observable<Mutation>.empty() }
             )
-
         case .start:
             return .just(.setStatus(.idle))
 

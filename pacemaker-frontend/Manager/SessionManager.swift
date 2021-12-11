@@ -15,5 +15,13 @@ protocol SessionManager: AnyObject {
 final class DefaultSessionManager: SessionManager {
     static let shared = DefaultSessionManager()
     var user: User?
-    var token: String?
+    var token: String? {
+        get {
+            UserDefaults.standard.string(forKey: "SessionManager.token")
+        }
+
+        set {
+            UserDefaults.standard.set(newValue, forKey: "SessionManager.token")
+        }
+    }
 }

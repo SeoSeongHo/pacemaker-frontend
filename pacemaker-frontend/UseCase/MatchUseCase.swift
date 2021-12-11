@@ -91,8 +91,9 @@ enum MatchEvent: String, CaseIterable, Codable {
     case FIRST_PLACE
     case SPEED_UP
     case SPEED_DOWN
+    case CANCEL
 }
 
 struct EmptyResponse: Codable {
-    
+
 }

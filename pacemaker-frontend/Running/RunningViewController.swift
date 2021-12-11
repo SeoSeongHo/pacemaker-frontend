@@ -256,6 +256,12 @@ class RunningViewController: UIViewController, View {
             })
             .disposed(by: disposeBag)
 
+        reactor.cancelPublisher
+            .subscribe(onNext: { [weak self] _ in
+                self?.dismiss(animated: true, completion: nil)
+            })
+            .disposed(by: disposeBag)
+
     }
 }
 

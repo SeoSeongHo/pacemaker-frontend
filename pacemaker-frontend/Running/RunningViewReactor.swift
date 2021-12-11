@@ -32,6 +32,7 @@ final class RunningViewReactor: Reactor {
         case setMatchUser([MatchUser])
     }
 
+    let cancelPublisher = PublishSubject<Void>()
     let donePublisher = PublishSubject<History>()
     let initialState: State
     private let locationManager: LocationManager
@@ -135,6 +136,8 @@ final class RunningViewReactor: Reactor {
             notificationManager.speedUp()
         case .SPEED_DOWN:
             notificationManager.speedDown()
+        case .CANCEL:
+            cancelPublisher.onNext(())
         case .NONE:
             break
         }

@@ -53,6 +53,7 @@ class DebugViewController: UIViewController {
 
         view.addSubview(stackView)
         stackView.addArrangedSubview(baseURLInput)
+        stackView.addArrangedSubview(matchPollingInterval)
         stackView.addArrangedSubview(saveButton)
         stackView.addArrangedSubview(matchButton)
 

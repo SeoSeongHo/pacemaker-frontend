@@ -224,9 +224,9 @@ class RunningViewController: UIViewController, View {
             .subscribe(onNext: { (prev, next) in
                 if next == 1 {
                     reactor.notification(for: .FIRST_PLACE)
-                } else if prev > next {
-                    reactor.notification(for: .OVERTAKEN)
                 } else if prev < next {
+                    reactor.notification(for: .OVERTAKEN)
+                } else if prev > next {
                     reactor.notification(for: .OVERTAKING)
                 }
             })
@@ -328,7 +328,7 @@ class ProgressView: UIView {
             make.left.equalToSuperview().inset(inset)
         }
 
-        speedLabel.text = "\(speed)m/s"
+        speedLabel.text = "\(String(format: "%.2f", max(0, speed)))m/s"
 
         layoutIfNeeded()
     }

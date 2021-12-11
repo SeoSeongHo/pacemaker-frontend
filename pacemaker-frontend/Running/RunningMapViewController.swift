@@ -126,7 +126,7 @@ class RunningMapViewController: UIViewController, View {
                     mapView.setRegion(viewRegion, animated: true)
                 }
 
-                speedLabel.textField.text = location.map { "\($0.speed)m/s" }
+                speedLabel.textField.text = location.map { "\(String(format: "%.2f", max(0, $0.speed)))m/s" }
             })
             .disposed(by: disposeBag)
 

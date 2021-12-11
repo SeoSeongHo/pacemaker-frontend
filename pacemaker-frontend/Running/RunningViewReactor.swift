@@ -132,7 +132,7 @@ final class RunningViewReactor: Reactor {
         return matchUseCase.sendMatchInfo(
             userMatchId: match.users.first?.userMatchId ?? -1,
             distance: currentState.distance,
-            currentSpeed: currentState.speed,
+            currentSpeed: max(0, currentState.speed),
             count: count
         )
             .asObservable()

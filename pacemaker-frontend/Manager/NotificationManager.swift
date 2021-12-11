@@ -18,6 +18,8 @@ protocol NotificationManager {
     func finishOther()
     func done()
     func firstPlace()
+    func speedUp()
+    func speedDown()
 }
 
 final class DefaultNotificationManager: NotificationManager {
@@ -83,6 +85,20 @@ final class DefaultNotificationManager: NotificationManager {
         makeNotification(
             title: "1등이에요!",
             sound: "first.mp3"
+        )
+    }
+    
+    func speedUp() {
+        makeNotification(
+            title: "좀 더 빠르게 달리세요!",
+            sound: "speed_up.mp3"
+        )
+    }
+        
+    func speedDown() {
+        makeNotification(
+            title: "좀 더 천천히 달리세요!",
+            sound: "speed_down.mp3"
         )
     }
 

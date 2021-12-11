@@ -245,14 +245,24 @@ class RunningViewController: UIViewController, View {
         Observable.combineLatest(
             reactor.state.map(\.meanSpeed).distinctUntilChanged(),
             reactor.state.map(\.speed).distinctUntilChanged()
-        )
-            .subscribe(onNext: { mean, current in
-                if current < mean * 0.5 {
-                    reactor.notification(for: .SPEED_UP)
-                }
-                else if current > mean * 1.5 {
-                    reactor.notification(for: .SPEED_DOWN)
-                }
+        ) { $0 < $1 * 0.5 }
+            .debounce(.seconds(10), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { _ in
+                reactor.notification(for: .SPEED_UP)
+            })
+            .disposed(by: disposeBag)
+
+        Observable.combineLatest(
+            reactor.state.map(\.meanSpeed).distinctUntilChanged(),
+            reactor.state.map(\.speed).distinctUntilChanged()
+        ) { $0 > $1 * 1.5 }
+            .debounce(.seconds(10), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .filter { $0 }
+            .subscribe(onNext: { _ in
+                reactor.notification(for: .SPEED_DOWN)
             })
             .disposed(by: disposeBag)
 

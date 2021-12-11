@@ -115,12 +115,16 @@ final class RunningViewReactor: Reactor {
     func notification(for event: MatchEvent) {
         switch event {
         case .LEFT_100M:
+            if currentState.isFinished { return }
             notificationManager.left100()
         case .LEFT_50M:
+            if currentState.isFinished { return }
             notificationManager.left50()
         case .OVERTAKEN:
+            if currentState.isFinished { return }
             notificationManager.overtaken()
         case .OVERTAKING:
+            if currentState.isFinished { return }
             notificationManager.overtaking()
         case .FINISH:
             locationManager.stop()
@@ -131,10 +135,13 @@ final class RunningViewReactor: Reactor {
             locationManager.stop()
             notificationManager.done()
         case .FIRST_PLACE:
+            if currentState.isFinished { return }
             notificationManager.firstPlace()
         case .SPEED_UP:
+            if currentState.isFinished { return }
             notificationManager.speedUp()
         case .SPEED_DOWN:
+            if currentState.isFinished { return }
             notificationManager.speedDown()
         case .CANCEL:
             cancelPublisher.onNext(())
@@ -155,6 +162,7 @@ final class RunningViewReactor: Reactor {
             .flatMap { [weak self, matchUseCase] match -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 if let event = match.alarmCategory {
+                    self.notification(for: event)
                     if event == .DONE {
                         _ = self.historyUseCase.getHistory(userMatchId: self.match.users[0].userMatchId)
                             .asObservable()

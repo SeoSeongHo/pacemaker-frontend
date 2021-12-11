@@ -17,6 +17,8 @@ class LoginViewController: UIViewController, View {
     private let scrollView = UIScrollView()
     private let contentView = UIView()
 
+    private let debugButton = UIButton()
+
     private let titleLabel = UILabel().then {
         $0.text = "Pacemaker"
         $0.font = .systemFont(ofSize: 40, weight: .bold)
@@ -60,11 +62,16 @@ class LoginViewController: UIViewController, View {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubview(titleLabel)
+        contentView.addSubview(debugButton)
         contentView.addSubview(bottomStackView)
         bottomStackView.addArrangedSubview(emailTextField)
         bottomStackView.addArrangedSubview(passwordTextField)
         bottomStackView.addArrangedSubview(loginButton)
         bottomStackView.addArrangedSubview(signupButton)
+
+        debugButton.snp.makeConstraints { make in
+            make.edges.equalTo(titleLabel)
+        }
 
         scrollView.snp.makeConstraints { make in
             make.top.left.right.equalToSuperview()
@@ -144,5 +151,14 @@ class LoginViewController: UIViewController, View {
                 }
             })
             .disposed(by: disposeBag)
+
+        // Debug action
+        debugButton.rx.tap
+            .subscribe(onNext: { [weak self] _ in
+                let viewController = DebugViewController()
+                self?.present(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
     }
+
 }

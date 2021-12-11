@@ -44,7 +44,7 @@ extension RequestManager { // implement func with default value
 
 final class DefaultRequestManager: RequestManager {
     static let shared = DefaultRequestManager()
-    let baseURL = "https://f316-49-142-56-142.ngrok.io"
+    var baseURL = "https://f316-49-142-56-142.ngrok.io"
     private let sessionManager: SessionManager
 
     init(sessionManager: SessionManager = DefaultSessionManager.shared) {

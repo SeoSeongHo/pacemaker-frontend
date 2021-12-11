@@ -46,7 +46,7 @@ final class RunningViewReactor: Reactor {
         locationManager: LocationManager = DefaultLocationManager.shared,
         notificationManager: NotificationManager = DefaultNotificationManager(),
         historyUseCase: HistoryUseCase = DefaultHistoryUseCase(),
-        matchUseCase: MatchUseCase = DefaultMatchUseCase()
+        matchUseCase: MatchUseCase = DefaultMatchUseCase.shared
     ) {
         self.historyUseCase = historyUseCase
         self.distance = distance
@@ -136,7 +136,7 @@ final class RunningViewReactor: Reactor {
             count: count
         )
             .asObservable()
-            .flatMap { [weak self] match -> Observable<Mutation> in
+            .flatMap { [weak self, matchUseCase] match -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 if let event = match.alarmCategory {
                     if event == .DONE {
@@ -151,7 +151,7 @@ final class RunningViewReactor: Reactor {
                 return .concat(
                     .just(.setMatchUser(match.matchUsers)),
                     Observable<Void>.just(())
-                        .delay(.seconds(1), scheduler: MainScheduler.instance)
+                        .delay(.seconds(matchUseCase.matchPollingInterval), scheduler: MainScheduler.instance)
                         .flatMap { [weak self] _ -> Observable<Mutation> in
                             guard let self = self else { return .empty() }
                             return self.pollMatch()

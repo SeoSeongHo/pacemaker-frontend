@@ -16,6 +16,10 @@ class HistoryViewController: UIViewController, View {
     private let tableView = UITableView().then {
         $0.register(HistoryCell.self, forCellReuseIdentifier: HistoryCell.reuseIdentifier)
     }
+
+    private let logoutButton = UIBarButtonItem().then {
+        $0.image = UIImage(systemName: "person")?.withRenderingMode(.alwaysOriginal)
+    }
     
     private let labelNoHistory = UILabel().then {
         $0.text = "No History"
@@ -27,6 +31,7 @@ class HistoryViewController: UIViewController, View {
     
     private func configure() {
         navigationItem.title = "History"
+        navigationItem.rightBarButtonItem = logoutButton
         view.backgroundColor = .white
         tableView.backgroundColor = .white
         
@@ -76,6 +81,13 @@ class HistoryViewController: UIViewController, View {
             .subscribe(onNext: { [weak self] history in
                 let viewController = HistoryDetailViewController(history: history)
                 self?.navigationController?.pushViewController(viewController, animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        logoutButton.rx.tap
+            .subscribe(onNext: { _ in
+                let viewController = LoginViewController(reactor: LoginViewReactor())
+                UIApplication.shared.keyWindow?.rootViewController = viewController
             })
             .disposed(by: disposeBag)
     }

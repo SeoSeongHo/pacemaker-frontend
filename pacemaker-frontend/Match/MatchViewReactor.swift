@@ -40,7 +40,7 @@ final class MatchViewReactor: Reactor {
     let initialState: State
     private let matchUseCase: MatchUseCase
 
-    init(matchUseCase: MatchUseCase = DefaultMatchUseCase()) {
+    init(matchUseCase: MatchUseCase = DefaultMatchUseCase.shared) {
         self.initialState = State(distance: Distance.short, runner: Runner.two)
         
         self.matchUseCase = matchUseCase
@@ -91,14 +91,14 @@ final class MatchViewReactor: Reactor {
             memberCount: currentState.runner.rawValue
         )
             .asObservable()
-            .flatMap { [weak self] match -> Observable<Mutation> in
+            .flatMap { [weak self, matchUseCase] match -> Observable<Mutation> in
                 guard let self = self else { return .empty() }
                 if match.status == .MATCHING_COMPLETE {
                     self.matchPublisher.accept(match)
                     return .just(.setStatus(.ready))
                 } else if match.status == .MATCHING, self.currentState.status == .finding {
                     return Observable<Void>.just(())
-                        .delay(.seconds(3), scheduler: MainScheduler.asyncInstance)
+                        .delay(.seconds(matchUseCase.matchPollingInterval), scheduler: MainScheduler.asyncInstance)
                         .flatMap { [weak self] _ -> Observable<Mutation> in
                             guard let self = self else { return .empty() }
                             return self.pollMatch()

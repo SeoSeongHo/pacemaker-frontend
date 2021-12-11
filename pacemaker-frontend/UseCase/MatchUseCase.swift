@@ -12,11 +12,15 @@ protocol MatchUseCase {
     func start(distance: Int, memberCount: Int) -> Single<Match>
     func cancel(distance: Int, memberCount: Int) -> Single<Match>
     func sendMatchInfo(userMatchId: Int64, distance: Double, currentSpeed: Double, count: Int) -> Single<MatchResponse>
+
+    var matchPollingInterval: Int { get }
 }
 
 final class DefaultMatchUseCase: MatchUseCase {
+    static let shared = DefaultMatchUseCase()
 
     private let requestManager: RequestManager = DefaultRequestManager.shared
+    var matchPollingInterval: Int = 1
 
     func start(distance: Int, memberCount: Int) -> Single<Match> {
 //        var users: [User] = []

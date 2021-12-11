@@ -154,7 +154,7 @@ extension RunningMapViewController: MKMapViewDelegate {
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         if let routePolyline = overlay as? MKPolyline {
             let renderer = MKPolylineRenderer(polyline: routePolyline)
-            renderer.strokeColor = UIColor.blue.withAlphaComponent(0.9)
+            renderer.strokeColor = UIColor.primary.withAlphaComponent(0.9)
             renderer.lineWidth = 7
             return renderer
         }

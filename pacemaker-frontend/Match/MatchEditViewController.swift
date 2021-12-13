@@ -13,12 +13,15 @@ import Then
 import SnapKit
 
 enum Distance: Int, CaseIterable {
+    case test = 200
     case short = 1000
     case middle = 1500
     case long = 2000
 
     var title: String {
         switch self {
+        case .test:
+            return "200m"
         case .short:
             return "1000m"
         case .middle:
@@ -128,12 +131,14 @@ class MatchEditViewController: UIViewController, View {
         reactor.state.map(\.distance)
             .map {
                 switch $0 {
-                case .short:
+                case .test:
                     return 0
-                case .middle:
+                case .short:
                     return 1
-                case .long:
+                case .middle:
                     return 2
+                case .long:
+                    return 3
                 }
             }
             .bind(to: distanceSegementedControl.rx.selectedSegmentIndex)
@@ -163,10 +168,12 @@ class MatchEditViewController: UIViewController, View {
             .map {
                 switch $0 {
                 case 0:
-                    return .setDistance(Distance.short)
+                    return .setDistance(Distance.test)
                 case 1:
-                    return .setDistance(Distance.middle)
+                    return .setDistance(Distance.short)
                 case 2:
+                    return .setDistance(Distance.middle)
+                case 3:
                     return .setDistance(Distance.long)
                 default:
                     throw DistanceError.undefined

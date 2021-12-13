@@ -96,12 +96,14 @@ class HistoryDetailViewController: UIViewController {
     
     private func setValue(history: History) {
         distanceLabel.textField.text = "\(history.totalDistance)m"
-        timeLabel.textField.text = "\(history.totalTime)min"
+        let minute = history.totalTime / 60
+        let second = history.totalTime % 60
+        timeLabel.textField.text = "\(minute < 10 ? "0\(minute)" : "\(minute)"):\(second < 10 ? "0\(second)" : "\(second)")"
         rankLabel.textField.text = "\(history.rank) / \(history.totalMembers)"
 
         var dataEntries: [BarChartDataEntry] = []
         for i in 0..<history.graph.count {
-            let dataEntry = BarChartDataEntry(x: Double(i), y: history.graph[i])
+            let dataEntry = BarChartDataEntry(x: Double(i * 7), y: history.graph[i])
             dataEntries.append(dataEntry)
         }
 
